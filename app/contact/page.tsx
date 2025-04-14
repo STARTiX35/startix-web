@@ -112,7 +112,7 @@ export default function Contact() {
             </div>
             <div className="order-1 md:order-2 bg-black rounded-3xl shadow-lg overflow-hidden h-48 md:h-auto">
               <Image
-                src="/images/event-crossgenre.jpg"
+                src="/images/events1.PNG"
                 alt="クロスジャンルJam"
                 width={600}
                 height={800}
