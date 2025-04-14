@@ -89,7 +89,7 @@ export default function Home() {
                   </div>
                   <h3 className="text-xl md:text-2xl font-bold mt-6 mb-4">クロスジャンルJAM｜新入生歓迎イベント</h3>
                   <p className="text-gray-600 text-base md:text-lg">
-                    異なる学類の学生が集まり、交流とアイディアづくりを楽しむカジュアルイベントです。ビジネスや起業の知識がなくてもOK。サイコロを使ったトークで自然に打ち解ける「サイコロ自己紹介」、ランダムなキーワードでビジネスを妄想する「妄想リストランテ」、ゲームで気軽に交流できる「雑談＆ボードゲーム」など、新しい仲間と、ここでしかできない体験を。
+                    異なる学類の学生が集まり、交流とアイディアづくりを楽しむカジュアルイベントです。起業の知識がなくてもOK。サイコロを使ったトークで自然に打ち解ける「サイコロ自己紹介」、ランダムなキーワードでを妄想する「妄想リストランテ」、ゲームで気軽に交流できる「雑談＆ボードゲーム」など、新しい仲間と、ここでしかできない体験を。
                   </p>
                   <div className="flex gap-4 mt-8">
                     <a href="https://lu.ma/ary5l3sj" target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all">
@@ -126,7 +126,7 @@ export default function Home() {
               </h2>
               <div className="w-24 h-1 bg-purple-600 mx-auto mb-8"></div>
               <p className="text-gray-600 max-w-3xl mx-auto text-base md:text-lg">
-                STARTiXは「スタートアップの発想と行動力を身につける」をモットーに、起業を志す学生が集まる筑波大学の起業サークルです。私たちは多様なバックグラウンドを持つメンバーと共に、アイデアの創出から実際の起業まで一貫したサポートを提供しています。
+               本気で夢を語り合える場所を作る。
               </p>
             </div>
             
@@ -164,7 +164,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-lg md:text-xl font-bold mb-4 relative z-10">イベント参加</h3>
                 <p className="text-gray-600 text-sm md:text-base relative z-10">
-                  クロスジャンルJAMやネットワーキングイベントなど、様々なイベントに参加して交流を深めます。異なる分野の学生と出会い、新しい視点やアイデアを得ることができます。
+                  クロスジャンルJAMや交流会など、様々なイベントに参加して交流を深めます。異なる分野の学生と出会い、新しい視点やアイデアを得ることができます。
                 </p>
               </div>
             </div>
@@ -277,9 +277,9 @@ export default function Home() {
         {/* フッター */}
         <footer className="bg-gray-900 text-white py-8">
           <div className="container mx-auto px-4">
-            <div className="flex flex-col md:flex-row justify-between items-center">
-              <div className="mb-4 md:mb-0">
-                <Link href="/" className="flex items-center">
+            <div className="flex flex-col items-center">
+              <div className="mb-4">
+                <Link href="/" className="flex items-center justify-center">
                   <div className="bg-white rounded-full p-1 mr-2">
                     <Image
                       src="/images/startix-logo.png"
@@ -294,15 +294,15 @@ export default function Home() {
                   起業を志す大学生の起業サークルです。
                 </p>
               </div>
-              <div className="flex space-x-6">
-                <Link href="/" className="hover:text-purple-400 transition-colors">
+              <div className="flex space-x-6 justify-center w-full">
+                <Link href="/" className="hover:text-purple-400 transition-colors w-[4em]">
                   ホーム
                 </Link>
-                <Link href="/event" className="hover:text-purple-400 transition-colors">
+                <Link href="/event" className="hover:text-purple-400 transition-colors w-[4em]">
                   イベント
                 </Link>
-                <Link href="/contact" className="hover:text-purple-400 transition-colors">
-                  お問い合わせ
+                <Link href="/contact" className="hover:text-purple-400 transition-colors w-[4em]">
+                 お問い合わせ
                 </Link>
               </div>
             </div>

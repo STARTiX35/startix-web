@@ -67,7 +67,7 @@ export default function Contact() {
                 <div>
                   <h3 className="font-bold mb-2">活動時間</h3>
                   <ul className="text-gray-600 space-y-1">
-                    <li>月2回のビジネス勉強イベント</li>
+                    <li>月2回のビジネス創出イベント</li>
                     <li>月1回のSTARTiX交流イベント</li>
                   </ul>
                 </div>
@@ -98,7 +98,7 @@ export default function Contact() {
                 </div>
                 <h3 className="text-xl font-bold mt-4">クロスジャンルJAM！新入生歓迎イベント</h3>
                 <p className="text-gray-600 mt-2">
-                  異なる学部の学生が集まり、交流ディスカッションを楽しむカジュアルイベントです。ビジネスや起業の知識がなくてもOK。サイコロを振ったトークで自然に打ち解ける「サイコロ自己紹介」、ランダムなキーワードでビジネスを発想する「逆算リストランチ」、ゲームで気軽に交流できる「雑談ボードゲーム」など、新しい仲間と、ここでしかできない体験を。
+                  異なる学部の学生が集まり、交流ディスカッションを楽しむカジュアルイベントです。起業の知識がなくてもOK。サイコロを振ったトークで自然に打ち解ける「サイコロ自己紹介」、ランダムなキーワードでを発想する「逆算リストランチ」、ゲームで気軽に交流できる「雑談ボードゲーム」など、新しい仲間と、ここでしかできない体験を。
                 </p>
                 <div className="flex gap-4 mt-8">
                   <a href="https://lu.ma/ary5l3sj" target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all">
@@ -110,14 +110,15 @@ export default function Contact() {
                 </div>
               </div>
             </div>
-            <div className="order-1 md:order-2 bg-black rounded-3xl shadow-lg overflow-hidden h-48 md:h-auto">
+            <div className="order-1 md:order-2 bg-black rounded-3xl shadow-lg overflow-hidden h-48 md:h-auto relative">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
               <Image
-                src="/images/events1.PNG"
-                alt="クロスジャンルJam"
-                width={600}
-                height={800}
-                className="w-full h-full object-cover"
-              />
+              src="/images/events1.PNG"
+              alt="クロスジャンルJam"
+              width={600}
+              height={800}
+              className="w-full h-full object-contain"
+            />
             </div>
           </div>
         </div>
@@ -126,9 +127,9 @@ export default function Contact() {
       {/* フッター */}
       <footer className="bg-gray-900 text-white py-8">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="mb-4 md:mb-0">
-              <Link href="/" className="flex items-center">
+          <div className="flex flex-col items-center text-center">
+            <div className="mb-4">
+              <Link href="/" className="flex items-center justify-center">
                 <div className="bg-white rounded-full p-1 mr-2">
                   <Image
                     src="/images/startix-logo.png"
@@ -143,15 +144,15 @@ export default function Contact() {
                 起業を志す大学生の起業サークルです。
               </p>
             </div>
-            <div className="flex space-x-6">
-              <Link href="/" className="hover:text-purple-400 transition-colors">
-                ホーム
+            <div className="flex justify-center space-x-6 w-full">
+              <Link href="/" className="hover:text-purple-400 transition-colors w-[4em]">
+              ホーム
               </Link>
-              <Link href="/event" className="hover:text-purple-400 transition-colors">
-                イベント
+              <Link href="/event" className="hover:text-purple-400 transition-colors w-[4em]">
+              イベント
               </Link>
-              <Link href="/contact" className="hover:text-purple-400 transition-colors">
-                お問い合わせ
+              <Link href="/contact" className="hover:text-purple-400 transition-colors w-[4em]">
+              お問い合わせ
               </Link>
             </div>
           </div>

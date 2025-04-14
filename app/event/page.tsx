@@ -15,7 +15,7 @@ export default function Event() {
       date: '2025年4月19日（水）',
       time: '14:00 - 17:00（13:30受付開始）',
       location: 'C3Lab（つくば市天久保3丁目19-5）',
-      description: '異なる学類の学生が集まり、交流とアイディアづくりを楽しむカジュアルイベントです。ビジネスや起業の知識がなくてもOK。サイコロを使ったトークで自然に打ち解ける「サイコロ自己紹介」、ランダムなキーワードでビジネスを妄想する「妄想リストランテ」、ゲームで気軽に交流できる「雑談＆ボードゲーム」など、新しい仲間と、ここでしかできない体験を。',
+      description: '異なる学類の学生が集まり、交流とアイディアづくりを楽しむカジュアルイベントです。や起業の知識がなくてもOK。サイコロを使ったトークで自然に打ち解ける「サイコロ自己紹介」、ランダムなキーワードでを妄想する「妄想リストランテ」、ゲームで気軽に交流できる「雑談＆ボードゲーム」など、新しい仲間と、ここでしかできない体験を。',
       image: '/images/events1.PNG',
       status: 'upcoming'
     }
@@ -43,7 +43,7 @@ export default function Event() {
               </h1>
               <div className="w-24 h-1 bg-purple-600 mx-auto mb-8"></div>
               <p className="text-gray-600 max-w-3xl mx-auto text-base md:text-lg">
-                STARTiXでは、定期的に様々なイベントを開催しています。アイデアソンやハッカソン、ネットワーキングイベントなど、起業に興味のある学生が集まり、交流を深めています。
+                STARTiXでは、定期的に様々なイベントを開催しています。アイデアソンやハッカソン、交流会など、起業に興味のある学生が集まり、交流を深めています。
               </p>
             </div>
           </div>
@@ -182,9 +182,9 @@ export default function Event() {
         {/* フッター */}
         <footer className="bg-gray-900 text-white py-8">
           <div className="container mx-auto px-4">
-            <div className="flex flex-col md:flex-row justify-between items-center">
-              <div className="mb-4 md:mb-0">
-                <Link href="/" className="flex items-center">
+            <div className="flex flex-col items-center">
+              <div className="mb-4">
+                <Link href="/" className="flex items-center justify-center">
                   <div className="bg-white rounded-full p-1 mr-2">
                     <Image
                       src="/images/startix-logo.png"
@@ -200,13 +200,13 @@ export default function Event() {
                 </p>
               </div>
               <div className="flex space-x-6">
-                <Link href="/" className="hover:text-purple-400 transition-colors">
+                <Link href="/" className="hover:text-purple-400 transition-colors w-[4em]">
                   ホーム
                 </Link>
-                <Link href="/event" className="hover:text-purple-400 transition-colors">
+                <Link href="/event" className="hover:text-purple-400 transition-colors w-[4em]">
                   イベント
                 </Link>
-                <Link href="/contact" className="hover:text-purple-400 transition-colors">
+                <Link href="/contact" className="hover:text-purple-400 transition-colors w-[4em]">
                   お問い合わせ
                 </Link>
               </div>
