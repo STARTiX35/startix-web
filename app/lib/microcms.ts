@@ -1,16 +1,16 @@
 import { createClient } from 'microcms-js-sdk';
 
-if (!process.env.MICROCMS_SERVICE_DOMAIN) {
-  throw new Error('MICROCMS_SERVICE_DOMAIN is required');
+if (!process.env.NEXT_PUBLIC_MICROCMS_SERVICE_DOMAIN) {
+  throw new Error('NEXT_PUBLIC_MICROCMS_SERVICE_DOMAIN is required');
 }
 
-if (!process.env.MICROCMS_API_KEY) {
-  throw new Error('MICROCMS_API_KEY is required');
+if (!process.env.NEXT_PUBLIC_MICROCMS_API_KEY) {
+  throw new Error('NEXT_PUBLIC_MICROCMS_API_KEY is required');
 }
 
 export const client = createClient({
-  serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN,  // あなたのMicroCMSのサービスドメイン
-  apiKey: process.env.MICROCMS_API_KEY,
+  serviceDomain: process.env.NEXT_PUBLIC_MICROCMS_SERVICE_DOMAIN,  // あなたのMicroCMSのサービスドメイン
+  apiKey: process.env.NEXT_PUBLIC_MICROCMS_API_KEY,
 });
 
 export type Event = {
