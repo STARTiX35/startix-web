@@ -29,21 +29,21 @@ export default async function Home() {
         <div className="relative bg-gradient-to-br from-purple-50 to-blue-50 min-h-[600px] overflow-hidden">
           <div className="container mx-auto px-4 py-20 relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-              <div className="relative order-2 md:order-1">
-                <div className="absolute -left-4 -top-4 w-24 h-24 bg-purple-100 rounded-full opacity-50"></div>
-                <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-blue-100 rounded-full opacity-50"></div>
-                <h1 className="text-3xl md:text-5xl font-bold mb-6 relative text-black">
-                  未来の<span className="text-purple-600 relative inline-block">
+              <div className="relative order-2 md:order-1 bg-black/40 backdrop-blur-sm p-8 rounded-3xl">
+                <div className="absolute -left-4 -top-4 w-24 h-24 bg-purple-200 rounded-full opacity-50"></div>
+                <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-blue-200 rounded-full opacity-50"></div>
+                <h1 className="text-3xl md:text-5xl font-bold mb-6 relative text-white drop-shadow-lg">
+                  未来の<span className="text-purple-200 relative inline-block font-extrabold">
                     起業家
                   </span>を、
                   <br />今ここから。
                 </h1>
-                <p className="text-black mb-8 text-base md:text-lg relative">
+                <p className="text-white/90 mb-8 text-base md:text-lg relative drop-shadow">
                   STARTiXは筑波大学の起業サークルです。新しいアイデアの創出から実際の起業まで、挑戦する学生をサポートします。一緒に夢を語りませんか？
                 </p>
                 <Link
                   href="/event"
-                  className="inline-flex items-center px-8 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all"
+                  className="inline-flex items-center px-8 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all relative"
                 >
                   次回イベントに参加
                 </Link>
