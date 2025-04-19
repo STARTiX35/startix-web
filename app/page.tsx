@@ -1,14 +1,25 @@
-'use client';
-
-
-
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FaInstagram, FaTwitter, FaFacebookF, FaClock, FaMapMarkerAlt } from 'react-icons/fa';
 import Header from './components/Header';
+import HeroSlideshow from './components/HeroSlideshow';
+import { client, Event, HeroImage } from './lib/microcms';
 
-export default function Home() {
+// サーバーコンポーネントに変更（'use client'を削除）
+export default async function Home() {
+  // MicroCMSから次回のイベントを取得
+  const response = await client.get({
+    endpoint: 'events',
+    queries: { filters: 'category[contains]upcoming', limit: 1 }
+  });
+  const nextEvent = response.contents[0];
+
+  // ヒーロー画像を取得
+  const heroImages = await client.getList({
+    endpoint: 'hero',
+  });
+
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -16,19 +27,18 @@ export default function Home() {
       <div className="pt-0 md:pt-16">
         {/* ヒーローセクション */}
         <div className="relative bg-gradient-to-br from-purple-50 to-blue-50 min-h-[600px] overflow-hidden">
-          <div className="absolute inset-0 bg-[url('/images/pattern.svg')] opacity-5"></div>
           <div className="container mx-auto px-4 py-20 relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-              <div className="relative">
+              <div className="relative order-2 md:order-1">
                 <div className="absolute -left-4 -top-4 w-24 h-24 bg-purple-100 rounded-full opacity-50"></div>
                 <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-blue-100 rounded-full opacity-50"></div>
-                <h1 className="text-3xl md:text-5xl font-bold mb-6 relative">
+                <h1 className="text-3xl md:text-5xl font-bold mb-6 relative text-black">
                   未来の<span className="text-purple-600 relative inline-block">
                     起業家
                   </span>を、
                   <br />今ここから。
                 </h1>
-                <p className="text-gray-600 mb-8 text-base md:text-lg relative">
+                <p className="text-black mb-8 text-base md:text-lg relative">
                   STARTiXは筑波大学の起業サークルです。新しいアイデアの創出から実際の起業まで、挑戦する学生をサポートします。一緒に夢を語りませんか？
                 </p>
                 <Link
@@ -38,22 +48,14 @@ export default function Home() {
                   次回イベントに参加
                 </Link>
               </div>
-              <div className="relative h-[400px]">
-                <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/20 to-blue-500/20 rounded-3xl transform rotate-3"></div>
-                <div className="absolute inset-0 bg-gradient-to-bl from-purple-500/20 to-blue-500/20 rounded-3xl transform -rotate-3"></div>
-                <Image
-                  src="/images/events1.PNG"
-                  alt="次回イベント：クロスジャンルJam"
-                  fill
-                  className="object-contain relative z-10"
-                  priority
-                />
+              <div className="relative order-1 md:order-2 h-[400px] md:h-[500px]">
+                <HeroSlideshow images={heroImages.contents.map((item: HeroImage) => item.image)} />
               </div>
             </div>
           </div>
         </div>
 
-        {/* 次回のイベント */}
+        {/* 次回のイベント - MicroCMSデータを使用 */}
         <section className="py-20 bg-white relative">
           <div className="absolute inset-0 bg-[url('/images/pattern.svg')] opacity-5"></div>
           <div className="container mx-auto px-4 relative z-10">
@@ -65,55 +67,74 @@ export default function Home() {
               <div className="w-24 h-1 bg-purple-600 mx-auto mb-8"></div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="order-2 md:order-1 bg-white rounded-3xl shadow-lg p-8 transform transition-transform hover:scale-105 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-purple-100 rounded-full opacity-50 -mr-16 -mt-16"></div>
-                <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-100 rounded-full opacity-50 -ml-16 -mb-16"></div>
-                <div className="space-y-4 relative z-10">
-                  <div className="flex items-center text-purple-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <span>2025年4月19日（水）</span>
-                  </div>
-                  <div className="flex items-center text-purple-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>14:00 - 17:00（13:30受付開始）</span>
-                  </div>
-                  <div className="flex items-center text-purple-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <span>C3Lab（つくば市天久保3丁目19-5）</span>
-                  </div>
-                  <h3 className="text-xl md:text-2xl font-bold mt-6 mb-4">クロスジャンルJAM｜新入生歓迎イベント</h3>
-                  <p className="text-gray-600 text-base md:text-lg">
-                    異なる学類の学生が集まり、交流とアイディアづくりを楽しむカジュアルイベントです。起業の知識がなくてもOK。サイコロを使ったトークで自然に打ち解ける「サイコロ自己紹介」、ランダムなキーワードでを妄想する「妄想リストランテ」、ゲームで気軽に交流できる「雑談＆ボードゲーム」など、新しい仲間と、ここでしかできない体験を。
-                  </p>
-                  <div className="flex gap-4 mt-8">
-                    <a href="https://lu.ma/ary5l3sj" target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all">
-                      参加申し込み
-                    </a>
-                    <a href="https://aboard-bush-c04.notion.site/JAM-1b571d1219ea807d81d8d1fa374e8d33" target="_blank" rel="noopener noreferrer" className="px-6 py-3 border border-purple-600 text-purple-600 rounded-full hover:bg-purple-50 transition-colors shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all">
-                      詳細を見る
-                    </a>
+            {nextEvent ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="order-2 md:order-1 bg-white rounded-3xl shadow-lg p-8 transform transition-transform hover:scale-105 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-purple-100 rounded-full opacity-50 -mr-16 -mt-16"></div>
+                  <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-100 rounded-full opacity-50 -ml-16 -mb-16"></div>
+                  <div className="space-y-4 relative z-10">
+                    <div className="flex items-center text-purple-600">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <span>{new Date(nextEvent.date).toLocaleDateString('ja-JP', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        weekday: 'short'
+                      })}</span>
+                    </div>
+                    <div className="flex items-center text-purple-600">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>{`${nextEvent.startTime} - ${nextEvent.endTime}`}</span>
+                    </div>
+                    <div className="flex items-center text-purple-600">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      <span>{nextEvent.location}</span>
+                    </div>
+                    <h3 className="text-xl md:text-2xl font-bold mt-6 mb-4">{nextEvent.title}</h3>
+                    <p className="text-gray-600 text-base md:text-lg">
+                      {nextEvent.description}
+                    </p>
+                    <div className="flex gap-4 mt-8">
+                      <a href={nextEvent.registrationUrl} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all">
+                        参加申し込み
+                      </a>
+                      <a href={nextEvent.detailsUrl} target="_blank" rel="noopener noreferrer" className="px-6 py-3 border border-purple-600 text-purple-600 rounded-full hover:bg-purple-50 transition-colors shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all">
+                        詳細を見る
+                      </a>
+                    </div>
                   </div>
                 </div>
+                <div className="order-1 md:order-2 bg-black rounded-3xl shadow-lg overflow-hidden transform transition-transform hover:scale-105 relative h-48 md:h-auto">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
+                  <Image
+                    src={nextEvent.imageUrl.url}
+                    alt={nextEvent.title}
+                    width={600}
+                    height={800}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
               </div>
-              <div className="order-1 md:order-2 bg-black rounded-3xl shadow-lg overflow-hidden transform transition-transform hover:scale-105 relative h-48 md:h-auto">
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
-                <Image
-                  src="/images/events1.PNG"
-                  alt="クロスジャンルJam"
-                  width={600}
-                  height={800}
-                  className="w-full h-full object-contain"
-                />
+            ) : (
+              <div className="text-center py-12 bg-white rounded-3xl shadow-lg p-8 transform transition-transform hover:scale-105 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-purple-100 rounded-full opacity-50 -mr-16 -mt-16"></div>
+                <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-100 rounded-full opacity-50 -ml-16 -mb-16"></div>
+                <div className="relative z-10">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-purple-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <p className="text-gray-600 text-lg">現在、開催予定のイベントはありません。</p>
+                  <p className="text-gray-600 mt-2">定期的にイベントを開催していますので、またチェックしてください。</p>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </section>
 

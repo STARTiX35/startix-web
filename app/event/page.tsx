@@ -1,30 +1,50 @@
-'use client';
-
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FaInstagram, FaTwitter, FaFacebookF, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaArrowRight } from 'react-icons/fa';
 import Header from '../components/Header';
+import { client } from '../lib/microcms';
+import type { Event } from '../lib/microcms';
+// サーバーコンポーネントに変更
+export default async function EventPage() {
+  // MicroCMSからデータを取得
+  const response = await client.getList({
+    endpoint: 'events',
+    queries: { filters: 'category[contains]upcoming' }
+  });
+  
 
-export default function Event() {
-  // 開催予定のイベントデータ
-  const upcomingEvents = [
-    {
-      id: 1,
-      title: 'クロスジャンルJAM｜新入生歓迎イベント',
-      date: '2025年4月19日（水）',
-      time: '14:00 - 17:00（13:30受付開始）',
-      location: 'C3Lab（つくば市天久保3丁目19-5）',
-      description: '異なる学類の学生が集まり、交流とアイディアづくりを楽しむカジュアルイベントです。や起業の知識がなくてもOK。サイコロを使ったトークで自然に打ち解ける「サイコロ自己紹介」、ランダムなキーワードでを妄想する「妄想リストランテ」、ゲームで気軽に交流できる「雑談＆ボードゲーム」など、新しい仲間と、ここでしかできない体験を。',
-      image: '/images/events1.PNG',
-      status: 'upcoming'
-    }
-  ];
+  const upcomingEvents = response.contents.map((event: Event) => ({
+    id: event.id,
+    title: event.title,
+    date: new Date(event.date).toLocaleDateString('ja-JP', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      weekday: 'short'
+    }),
+    time: `${event.startTime} - ${event.endTime}`,
+    location: event.location,
+    description: event.description,
+    image: event.imageUrl.url,
+    registrationUrl: event.registrationUrl,
+    detailsUrl: event.detailsUrl
+  }));
 
-  // 過去のイベントデータ（現在は空だが、将来的に追加できるように準備）
-  const pastEvents = [
-    // 過去のイベントが追加されたらここに追加
-  ];
+  // 過去のイベントを取得
+  const pastResponse = await client.getList({
+    endpoint: 'events',
+    queries: { filters: 'category[not_contains]upcoming' }
+  });
+
+  const pastEvents = pastResponse.contents.map((event: Event) => ({
+    id: event.id,
+    title: event.title,
+    date: new Date(event.date).toLocaleDateString('ja-JP'),
+    description: event.description,
+    image: event.imageUrl.url,
+    detailsUrl: event.detailsUrl
+  }));
 
   return (
     <div className="min-h-screen bg-white">
@@ -85,10 +105,10 @@ export default function Event() {
                         {event.description}
                       </p>
                       <div className="flex gap-4 mt-8">
-                        <a href="https://lu.ma/ary5l3sj" target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all">
+                        <a href={event.registrationUrl} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all">
                           参加申し込み
                         </a>
-                        <a href="https://aboard-bush-c04.notion.site/JAM-1b571d1219ea807d81d8d1fa374e8d33" target="_blank" rel="noopener noreferrer" className="px-6 py-3 border border-purple-600 text-purple-600 rounded-full hover:bg-purple-50 transition-colors shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all">
+                        <a href={event.detailsUrl} target="_blank" rel="noopener noreferrer" className="px-6 py-3 border border-purple-600 text-purple-600 rounded-full hover:bg-purple-50 transition-colors shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all">
                           詳細を見る
                         </a>
                       </div>
@@ -98,8 +118,8 @@ export default function Event() {
                 <div className="order-1 md:order-2 bg-black rounded-3xl shadow-lg overflow-hidden transform transition-transform hover:scale-105 relative h-48 md:h-auto">
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
                   <Image
-                    src="/images/events1.PNG"
-                    alt="クロスジャンルJam"
+                    src={upcomingEvents[0]?.image || '/images/events1.PNG'}
+                    alt={upcomingEvents[0]?.title || 'イベント画像'}
                     width={600}
                     height={800}
                     className="w-full h-full object-contain"
@@ -156,9 +176,9 @@ export default function Event() {
                       <p className="text-gray-600 text-sm md:text-base">
                         {event.description}
                       </p>
-                      <button className="text-purple-600 font-medium hover:text-purple-700 transition-colors flex items-center">
+                      <a href={event.detailsUrl} className="text-purple-600 font-medium hover:text-purple-700 transition-colors flex items-center">
                         詳細を見る <FaArrowRight className="ml-1" />
-                      </button>
+                      </a>
                     </div>
                   </div>
                 ))}
