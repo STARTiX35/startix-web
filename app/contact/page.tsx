@@ -53,7 +53,7 @@ export default async function Contact() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* メールアドレス */}
-              <div className="flex items-start space-x-4">
+              <div className="flex items-start space-x-4 md:ml-[200px]">
                 <FaEnvelope className="text-purple-600 text-xl mt-1" />
                 <div>
                   <h3 className="font-bold mb-2">メールアドレス</h3>
