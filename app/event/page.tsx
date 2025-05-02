@@ -6,6 +6,7 @@ import Header from '../components/Header';
 import { client } from '../lib/microcms';
 import type { Event } from '../lib/microcms';
 // サーバーコンポーネントに変更
+export const revalidate = 86400; // 24時間（秒単位）
 export default async function EventPage() {
   // MicroCMSからデータを取得
   const response = await client.getList({
@@ -63,7 +64,8 @@ export default async function EventPage() {
               </h1>
               <div className="w-24 h-1 bg-purple-600 mx-auto mb-8"></div>
               <p className="text-gray-600 max-w-3xl mx-auto text-base md:text-lg">
-                STARTiXでは、定期的に様々なイベントを開催しています。アイデアソンやハッカソン、交流会など、起業に興味のある学生が集まり、交流を深めています。
+                STARTiXでは、
+                <br/>定期的にイベントを開催しています。起業に興味のある学生が集まり、交流を深めています。
               </p>
             </div>
           </div>
@@ -134,7 +136,7 @@ export default async function EventPage() {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-purple-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  <p className="text-gray-600 text-lg">現在、開催予定のイベントはありません。</p>
+                  <p className="text-gray-600 text-lg">開催予定のイベントはありません。</p>
                   <p className="text-gray-600 mt-2">定期的にイベントを開催していますので、またチェックしてください。</p>
                 </div>
               </div>
