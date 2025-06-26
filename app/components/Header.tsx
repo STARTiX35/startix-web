@@ -30,7 +30,7 @@ export default function Header() {
               <li>
                 <Link
                   href="/"
-                  className="text-gray-700 hover:text-purple-600 transition-colors"
+                  className="text-gray-700 hover:text-purple-600 transition-colors font-medium"
                 >
                   ホーム
                 </Link>
@@ -38,7 +38,7 @@ export default function Header() {
               <li>
                 <Link
                   href="/event"
-                  className="text-gray-700 hover:text-purple-600 transition-colors"
+                  className="text-gray-700 hover:text-purple-600 transition-colors font-medium"
                 >
                   イベント
                 </Link>
@@ -46,7 +46,7 @@ export default function Header() {
               <li>
                 <Link
                   href="/contact"
-                  className="text-gray-700 hover:text-purple-600 transition-colors"
+                  className="text-gray-700 hover:text-purple-600 transition-colors font-medium"
                 >
                   お問い合わせ
                 </Link>
@@ -100,7 +100,7 @@ export default function Header() {
                 <li>
                   <Link
                     href="/"
-                    className="block text-gray-700 hover:text-purple-600 transition-colors py-2"
+                    className="block text-gray-700 hover:text-purple-600 hover:bg-purple-50 rounded-md transition-colors py-2 px-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     ホーム
@@ -109,7 +109,7 @@ export default function Header() {
                 <li>
                   <Link
                     href="/event"
-                    className="block text-gray-700 hover:text-purple-600 transition-colors py-2"
+                    className="block text-gray-700 hover:text-purple-600 hover:bg-purple-50 rounded-md transition-colors py-2 px-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     イベント
@@ -118,7 +118,7 @@ export default function Header() {
                 <li>
                   <Link
                     href="/contact"
-                    className="block text-gray-700 hover:text-purple-600 transition-colors py-2"
+                    className="block text-gray-700 hover:text-purple-600 hover:bg-purple-50 rounded-md transition-colors py-2 px-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     お問い合わせ
