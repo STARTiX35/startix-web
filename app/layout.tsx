@@ -3,6 +3,7 @@ import React from "react";
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
+import Header from "./components/Header";
 
 export const metadata: Metadata = {
   title: "STARTiX - 筑波大学起業サークル",
@@ -20,6 +21,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body>
+        <Header />
         {children}
         <Analytics />
       </body>

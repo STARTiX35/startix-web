@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
+import React, { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -28,26 +28,27 @@ export default function Header() {
           <nav className="hidden md:block">
             <ul className="flex space-x-8 items-center">
               <li>
-                <Link href="/" className="text-gray-700 hover:text-purple-600 transition-colors">
+                <Link
+                  href="/"
+                  className="text-gray-700 hover:text-purple-600 transition-colors"
+                >
                   ホーム
-                </Link>
-              </li>
-              <li>
-                <Link href="/event" className="text-gray-700 hover:text-purple-600 transition-colors">
-                  イベント
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="text-gray-700 hover:text-purple-600 transition-colors">
-                  お問い合わせ
                 </Link>
               </li>
               <li>
                 <Link
                   href="/event"
-                  className="px-6 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors"
+                  className="text-gray-700 hover:text-purple-600 transition-colors"
                 >
-                  参加する
+                  イベント
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/contact"
+                  className="text-gray-700 hover:text-purple-600 transition-colors"
+                >
+                  お問い合わせ
                 </Link>
               </li>
             </ul>
@@ -90,15 +91,15 @@ export default function Header() {
             )}
           </button>
         </div>
-        
+
         {/* モバイルメニュー */}
         {isMenuOpen && (
           <div className="md:hidden bg-white border-t border-gray-200">
             <div className="container mx-auto px-4 py-4">
               <ul className="flex flex-col space-y-4">
                 <li>
-                  <Link 
-                    href="/" 
+                  <Link
+                    href="/"
                     className="block text-gray-700 hover:text-purple-600 transition-colors py-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
@@ -106,8 +107,8 @@ export default function Header() {
                   </Link>
                 </li>
                 <li>
-                  <Link 
-                    href="/event" 
+                  <Link
+                    href="/event"
                     className="block text-gray-700 hover:text-purple-600 transition-colors py-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
@@ -115,21 +116,12 @@ export default function Header() {
                   </Link>
                 </li>
                 <li>
-                  <Link 
-                    href="/contact" 
+                  <Link
+                    href="/contact"
                     className="block text-gray-700 hover:text-purple-600 transition-colors py-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     お問い合わせ
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/event"
-                    className="block px-6 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors text-center"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    参加する
                   </Link>
                 </li>
               </ul>
@@ -141,4 +133,4 @@ export default function Header() {
       <div className="pt-16" />
     </>
   );
-} 
+}
