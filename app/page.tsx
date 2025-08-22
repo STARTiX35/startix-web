@@ -11,6 +11,7 @@ import {
 import Header from "./components/Header";
 import HeroSlideshow from "./components/HeroSlideshow";
 import { client, Event, HeroImage } from "./lib/microcms";
+import { Metadata } from "next";
 
 // サーバーコンポーネントに変更（'use client'を削除）
 export default async function Home() {
@@ -37,7 +38,12 @@ export default async function Home() {
               <div className="relative order-2 md:order-1">
                 <div className="absolute -left-4 -top-4 w-24 h-24 bg-purple-100 rounded-full opacity-50"></div>
                 <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-blue-100 rounded-full opacity-50"></div>
-                <h1 className="text-3xl md:text-5xl font-bold mb-6 relative text-black">
+                {/* SEOのための非表示h1タグ */}
+                <h1 className="sr-only">
+                  STARTiX - 筑波大学の起業サークル
+                </h1>
+                {/* 従来のh1の見た目をpタグで維持 */}
+                <p className="text-3xl md:text-5xl font-bold mb-6 relative text-black">
                   未来の
                   <span className="text-purple-600 relative inline-block">
                     起業家
@@ -45,7 +51,7 @@ export default async function Home() {
                   を、
                   <br />
                   今ここから。
-                </h1>
+                </p>
                 <p className="text-black mb-8 text-base md:text-lg relative">
                   STARTiXは筑波大学の起業サークルです。新しいアイデアの創出から実際の起業まで、挑戦する学生をサポートします。一緒に夢を語りませんか？
                 </p>
@@ -224,12 +230,17 @@ export default async function Home() {
           <div className="absolute inset-0 bg-[url('/images/pattern.svg')] opacity-5"></div>
           <div className="container mx-auto px-4 relative z-10">
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              {/* SEOのための非表示h2タグ */}
+              <h2 className="sr-only">
+                STARTiXのミッション：本気で夢を語り合える場所を作る
+              </h2>
+              {/* 従来のh2の見た目をpタグで維持 */}
+              <p className="text-3xl md:text-4xl font-bold mb-4">
                 Our Mission
                 <span className="block text-xl md:text-2xl mt-2 text-gray-600">
                   STARTiXの活動
                 </span>
-              </h2>
+              </p>
               <div className="w-24 h-1 bg-purple-600 mx-auto mb-8"></div>
               <p className="text-gray-600 max-w-3xl mx-auto text-base md:text-lg">
                 本気で夢を語り合える場所を作る。
@@ -255,9 +266,9 @@ export default async function Home() {
                     />
                   </svg>
                 </div>
-                <h3 className="text-lg md:text-xl font-bold mb-4 relative z-10">
+                <p className="text-lg md:text-xl font-bold mb-4 relative z-10">
                   アイデアソン
-                </h3>
+                </p>
                 <p className="text-gray-600 text-sm md:text-base relative z-10">
                   定期的にアイデアソンを開催し、創造的な発想力を養います。様々な課題に対して、革新的なソリューションを生み出す力を鍛えます。
                 </p>
@@ -280,9 +291,9 @@ export default async function Home() {
                     />
                   </svg>
                 </div>
-                <h3 className="text-lg md:text-xl font-bold mb-4 relative z-10">
+                <p className="text-lg md:text-xl font-bold mb-4 relative z-10">
                   ハッカソン
-                </h3>
+                </p>
                 <p className="text-gray-600 text-sm md:text-base relative z-10">
                   アイデアを形にするハッカソンで、実践的なスキルを身につけます。プログラミングサークルとの連携し、プロトタイプ開発を通じて、技術力とチームワークを強化します。
                 </p>
@@ -305,9 +316,9 @@ export default async function Home() {
                     />
                   </svg>
                 </div>
-                <h3 className="text-lg md:text-xl font-bold mb-4 relative z-10">
+                <p className="text-lg md:text-xl font-bold mb-4 relative z-10">
                   イベント参加
-                </h3>
+                </p>
                 <p className="text-gray-600 text-sm md:text-base relative z-10">
                   クロスジャンルJAMや交流会など、様々なイベントに参加して交流を深めます。異なる分野の学生と出会い、新しい視点やアイデアを得ることができます。
                 </p>
@@ -358,7 +369,7 @@ export default async function Home() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
                   <Image
                     src="/images/kaienintro.JPG"
-                    alt="小峯 海円"
+                    alt="STARTiX代表 小峯海円のプロフィール写真"
                     fill
                     className="object-cover"
                   />
@@ -367,9 +378,9 @@ export default async function Home() {
                   <div className="absolute -top-8 left-6 bg-purple-600 text-white px-4 py-1 rounded-full text-sm z-20 shadow-lg">
                     代表
                   </div>
-                  <h3 className="text-lg md:text-xl font-bold mb-2">
+                  <p className="text-lg md:text-xl font-bold mb-2">
                     小峯 海円
-                  </h3>
+                  </p>
                   <p className="text-gray-600 text-sm md:text-base">
                     社会工学類2年。大学1年次にSTARTiXを設立。複数のイベントに参加、インターンシップ経験、起業準備中。誰よりも起業に取り組む、勉強家。
                   </p>
@@ -380,7 +391,7 @@ export default async function Home() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
                   <Image
                     src="/images/shojiintro.jpeg"
-                    alt="庄司 悠太郎"
+                    alt="STARTiX副代表 庄司悠太郎のプロフィール写真"
                     fill
                     className="object-cover"
                   />
@@ -389,9 +400,9 @@ export default async function Home() {
                   <div className="absolute -top-8 left-6 bg-cyan-600 text-white px-4 py-1 rounded-full text-sm z-20 shadow-lg">
                     副代表
                   </div>
-                  <h3 className="text-lg md:text-xl font-bold mb-2">
+                  <p className="text-lg md:text-xl font-bold mb-2">
                     庄司 悠太郎
-                  </h3>
+                  </p>
                   <p className="text-gray-600 text-sm md:text-base">
                     社会工学類3年生。インターンシップ経験、起業準備中。いつも笑顔なムードメーカー。長期休みに海外ボランティアに取り組むグローバルな視点を持つ。
                   </p>
@@ -402,7 +413,7 @@ export default async function Home() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
                   <Image
                     src="/images/ryogointro.jpg"
-                    alt="細井 崚吾"
+                    alt="STARTiX副代表 細井崚吾のプロフィール写真"
                     fill
                     className="object-cover object-[center_25%]"
                   />
@@ -411,9 +422,9 @@ export default async function Home() {
                   <div className="absolute -top-8 left-6 bg-cyan-600 text-white px-4 py-1 rounded-full text-sm z-20 shadow-lg">
                     副代表
                   </div>
-                  <h3 className="text-lg md:text-xl font-bold mb-2">
+                  <p className="text-lg md:text-xl font-bold mb-2">
                     細井 崚吾
-                  </h3>
+                  </p>
                   <p className="text-gray-600 text-sm md:text-base">
                     社会工学類2年生。インターンシップ経験、起業準備中。AI使って楽するのが大好き。このホームページを作った張本人。キャンプが好きらしいのでBBQに行ってお肉を焼いてもらおう。
                   </p>
@@ -424,7 +435,7 @@ export default async function Home() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
                   <Image
                     src="/images/takekiintro.JPG"
-                    alt="森 丈耀"
+                    alt="STARTiX財務 森丈耀のプロフィール写真"
                     fill
                     className="object-cover object-[center_25%]"
                   />
@@ -433,7 +444,7 @@ export default async function Home() {
                   <div className="absolute -top-8 left-6 bg-orange-600 text-white px-4 py-1 rounded-full text-sm z-20 shadow-lg">
                     財務
                   </div>
-                  <h3 className="text-lg md:text-xl font-bold mb-2">森 丈耀</h3>
+                  <p className="text-lg md:text-xl font-bold mb-2">森 丈耀</p>
                   <p className="text-gray-600 text-sm md:text-base">
                     東京大学農学部3年生。食に関する環境問題に取り組んでいる。どこからでも参加する、やる気No.1。STARTiXの財務を担当。
                   </p>
@@ -446,3 +457,22 @@ export default async function Home() {
     </div>
   );
 }
+
+export const metadata: Metadata = {
+  title: 'STARTiX - 筑波大学の起業サークル',
+  description: '起業を志す大学生が集まり、本気で夢を語り合えるコミュニティ。',
+  openGraph: {
+    title: 'STARTiX - 筑波大学の起業サークル',
+    description: '起業を志す大学生が集まり、本気で夢を語り合えるコミュニティ。',
+    url: 'https://startix-web-iota.vercel.app/',
+    siteName: 'STARTiX',
+    locale: 'ja_JP',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'STARTiX - 筑波大学の起業サークル',
+    description: '起業を志す大学生が集まり、本気で夢を語り合えるコミュニティ。',
+    images: ['/images/startix-logo.png'],
+  },
+};
