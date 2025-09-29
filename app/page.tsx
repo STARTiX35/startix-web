@@ -14,9 +14,11 @@ import { client, Event, HeroImage } from "./lib/microcms";
 import { Metadata } from "next";
 
 // サーバーコンポーネントに変更（'use client'を削除）
+export const revalidate = 3600; // 1時間（秒単位）
+
 export default async function Home() {
   // MicroCMSから次回のイベントを取得
-  const response = await client.get({
+  const response = await client.getList({
     endpoint: "events",
     queries: { filters: "category[contains]upcoming", limit: 1 },
   });
