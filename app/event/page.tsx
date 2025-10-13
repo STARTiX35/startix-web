@@ -14,7 +14,7 @@ import Header from "../components/Header";
 import { client } from "../lib/microcms";
 import type { Event } from "../lib/microcms";
 // サーバーコンポーネントに変更
-export const revalidate = 86400; // 24時間（秒単位）
+export const revalidate = 3600; // 1時間（秒単位）
 export default async function EventPage() {
   // MicroCMSからデータを取得
   const response = await client.getList({
