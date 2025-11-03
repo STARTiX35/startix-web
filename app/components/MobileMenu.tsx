@@ -1,7 +1,7 @@
 'use client';
 
 import React, { FC } from 'react';
-import Link from 'next/link';
+import RelativeLink from './RelativeLink';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -27,13 +27,13 @@ const MobileMenu: FC<MobileMenuProps> = ({ isOpen, onClose }) => {
           <nav className="mt-8">
             <ul className="space-y-4">
               <li>
-                <Link
+                <RelativeLink
                   href="/event"
                   className="block text-gray-700 hover:text-purple-600 transition-colors py-2"
                   onClick={onClose}
                 >
                   イベント
-                </Link>
+                </RelativeLink>
               </li>
               <li>
                 <a 
@@ -54,13 +54,13 @@ const MobileMenu: FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                 </a>
               </li>
               <li>
-                <Link
+                <RelativeLink
                   href="/contact"
                   className="block text-gray-700 hover:text-purple-600 transition-colors py-2"
                   onClick={onClose}
                 >
                   お問い合わせ
-                </Link>
+                </RelativeLink>
               </li>
             </ul>
           </nav>

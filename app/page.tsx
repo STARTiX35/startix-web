@@ -1,5 +1,4 @@
 import React from "react";
-import Link from "next/link";
 import Image from "next/image";
 import {
   FaInstagram,
@@ -8,10 +7,10 @@ import {
   FaClock,
   FaMapMarkerAlt,
 } from "react-icons/fa";
-import Header from "./components/Header";
 import HeroSlideshow from "./components/HeroSlideshow";
 import { client, Event, HeroImage } from "./lib/microcms";
 import { Metadata } from "next";
+import RelativeLink from "./components/RelativeLink";
 
 // サーバーコンポーネントに変更（'use client'を削除）
 export const revalidate = 3600; // 1時間（秒単位）
@@ -57,12 +56,12 @@ export default async function Home() {
                 <p className="text-black mb-8 text-base md:text-lg relative">
                   STARTiXは筑波大学の起業サークルです。新しいアイデアの創出から実際の起業まで、挑戦する学生をサポートします。一緒に夢を語りませんか？
                 </p>
-                <Link
+                <RelativeLink
                   href="/event"
                   className="inline-flex items-center px-8 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all"
                 >
                   次回イベントに参加
-                </Link>
+                </RelativeLink>
               </div>
               <div className="relative order-1 md:order-2 h-[400px] md:h-[500px]">
                 <HeroSlideshow
@@ -193,6 +192,8 @@ export default async function Home() {
                     width={600}
                     height={800}
                     className="w-full h-full object-contain"
+                    loading="lazy"
+                    sizes="(max-width: 768px) 100vw, 50vw"
                   />
                 </div>
               </div>

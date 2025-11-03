@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
+import RelativeLink from "./RelativeLink";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -15,7 +15,7 @@ export default function Header() {
     <>
       <header className="fixed w-full bg-white/90 backdrop-blur-sm shadow-sm z-40">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-          <Link href="/" className="flex items-center">
+          <RelativeLink href="/" className="flex items-center">
             <Image
               src="/images/startix-logo.png"
               alt="STARTiX"
@@ -24,32 +24,32 @@ export default function Header() {
               className="mr-2"
             />
             <span className="text-xl font-bold text-purple-600">STARTiX</span>
-          </Link>
+          </RelativeLink>
           <nav className="hidden md:block">
             <ul className="flex space-x-8 items-center">
               <li>
-                <Link
+                <RelativeLink
                   href="/"
                   className="text-gray-700 hover:text-purple-600 transition-colors font-medium"
                 >
                   ホーム
-                </Link>
+                </RelativeLink>
               </li>
               <li>
-                <Link
+                <RelativeLink
                   href="/event"
                   className="text-gray-700 hover:text-purple-600 transition-colors font-medium"
                 >
                   イベント
-                </Link>
+                </RelativeLink>
               </li>
               <li>
-                <Link
+                <RelativeLink
                   href="/contact"
                   className="text-gray-700 hover:text-purple-600 transition-colors font-medium"
                 >
                   お問い合わせ
-                </Link>
+                </RelativeLink>
               </li>
             </ul>
           </nav>
@@ -98,31 +98,31 @@ export default function Header() {
             <div className="container mx-auto px-4 py-4">
               <ul className="flex flex-col space-y-4">
                 <li>
-                  <Link
+                  <RelativeLink
                     href="/"
                     className="block text-gray-700 hover:text-purple-600 hover:bg-purple-50 rounded-md transition-colors py-2 px-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     ホーム
-                  </Link>
+                  </RelativeLink>
                 </li>
                 <li>
-                  <Link
+                  <RelativeLink
                     href="/event"
                     className="block text-gray-700 hover:text-purple-600 hover:bg-purple-50 rounded-md transition-colors py-2 px-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     イベント
-                  </Link>
+                  </RelativeLink>
                 </li>
                 <li>
-                  <Link
+                  <RelativeLink
                     href="/contact"
                     className="block text-gray-700 hover:text-purple-600 hover:bg-purple-50 rounded-md transition-colors py-2 px-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     お問い合わせ
-                  </Link>
+                  </RelativeLink>
                 </li>
               </ul>
             </div>
