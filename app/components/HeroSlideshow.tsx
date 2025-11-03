@@ -33,6 +33,8 @@ export default function HeroSlideshow({ images }: Props) {
             fill
             className="object-cover"
             priority={index === 0}
+            sizes="(max-width: 768px) 100vw, 50vw"
+            quality={85}
           />
           <div className="absolute inset-0 bg-black/20"></div>
         </div>

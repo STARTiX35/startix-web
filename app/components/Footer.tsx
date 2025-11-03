@@ -1,6 +1,6 @@
-import Link from "next/link";
 import Image from "next/image";
 import { FaInstagram, FaTwitter, FaFacebookF } from "react-icons/fa";
+import RelativeLink from "./RelativeLink";
 
 export default function Footer() {
   return (
@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center">
           <div className="mb-4">
-            <Link href="/" className="flex items-center justify-center">
+            <RelativeLink href="/" className="flex items-center justify-center">
               <div className="bg-white rounded-full p-1 mr-2">
                 <Image
                   src="/images/startix-logo.png"
@@ -18,30 +18,30 @@ export default function Footer() {
                 />
               </div>
               <span className="text-2xl font-bold text-white">STARTiX</span>
-            </Link>
+            </RelativeLink>
             <p className="text-gray-400 mt-2 text-center">
               起業を志す大学生の起業サークルです。
             </p>
           </div>
           <div className="flex space-x-6">
-            <Link
+            <RelativeLink
               href="/"
               className="hover:text-purple-400 transition-colors whitespace-nowrap"
             >
               ホーム
-            </Link>
-            <Link
+            </RelativeLink>
+            <RelativeLink
               href="/event"
               className="hover:text-purple-400 transition-colors whitespace-nowrap"
             >
               イベント
-            </Link>
-            <Link
+            </RelativeLink>
+            <RelativeLink
               href="/contact"
               className="hover:text-purple-400 transition-colors whitespace-nowrap"
             >
               お問い合わせ
-            </Link>
+            </RelativeLink>
           </div>
         </div>
         <div className="flex justify-center space-x-6 mt-8">
