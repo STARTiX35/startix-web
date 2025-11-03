@@ -1,0 +1,6 @@
+# すべてのクローラーに対してサイト全体のクロールを許可
+User-agent: *
+Allow: /
+
+# サイトマップの場所を指定（Google Search Console での送信用）
+Sitemap: https://startix-tsukuba.net/sitemap.xml
