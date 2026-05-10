@@ -6,6 +6,9 @@ node_modules
 .env.production.local
 .next
 
+# TypeScript incremental build
+tsconfig.tsbuildinfo
+
 # OS
 .DS_Store
 

@@ -1,19 +1,25 @@
-// MicroCMS クライアント
-// このモジュールはサーバーコンポーネント専用。
+// MicroCMS クライアント (サーバー専用)。
 // API キーは NEXT_PUBLIC_ を付けないことでブラウザバンドルに埋め込まれない。
-// 後方互換のため旧 NEXT_PUBLIC_* 変数もフォールバックとして読むが、本番では新変数のみ使うこと。
+// NEXT_PUBLIC_ プレフィックス付きの変数が残っていると Next.js のビルド時に
+// クライアント JS バンドルへ literal で焼き込まれるため、明示的に拒否する。
 import 'server-only';
 import { createClient } from 'microcms-js-sdk';
 
-const serviceDomain =
-  process.env.MICROCMS_SERVICE_DOMAIN ?? process.env.NEXT_PUBLIC_MICROCMS_SERVICE_DOMAIN;
-const apiKey = process.env.MICROCMS_API_KEY ?? process.env.NEXT_PUBLIC_MICROCMS_API_KEY;
+if (process.env.NEXT_PUBLIC_MICROCMS_API_KEY) {
+  throw new Error(
+    'NEXT_PUBLIC_MICROCMS_API_KEY must be removed. ' +
+      'NEXT_PUBLIC_ prefix leaks the key into the client bundle. Use MICROCMS_API_KEY instead.',
+  );
+}
+
+const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN?.trim();
+const apiKey = process.env.MICROCMS_API_KEY?.trim();
 
 if (!serviceDomain) {
-  throw new Error('MICROCMS_SERVICE_DOMAIN is required');
+  throw new Error('MICROCMS_SERVICE_DOMAIN is required (server-side env var, no NEXT_PUBLIC_ prefix)');
 }
 if (!apiKey) {
-  throw new Error('MICROCMS_API_KEY is required');
+  throw new Error('MICROCMS_API_KEY is required (server-side env var, no NEXT_PUBLIC_ prefix)');
 }
 
 export const client = createClient({
