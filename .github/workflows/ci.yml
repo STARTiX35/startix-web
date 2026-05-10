@@ -12,10 +12,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint-and-build:
-    name: Lint & Build
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
 
@@ -34,13 +34,30 @@ jobs:
       - name: Check internal links use RelativeLink
         run: node tests/check-relative-paths.test.mjs
 
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # build は MicroCMS の実 secrets がある場合のみ実行する。
+    # 全ページが SSG で MicroCMS API を叩くため、スタブでは prerender が失敗する。
+    # PR の build 検証は Vercel Preview に委ねる構成。
+    if: ${{ vars.RUN_BUILD_IN_CI == '1' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Build
         env:
-          # ビルドだけ通すためのスタブ。実 API には接続せず、
-          # microcms.ts の env チェックを通過させるためだけに使う。
-          # 実 API を叩く E2E は別ジョブで secrets を必要とする。
-          MICROCMS_SERVICE_DOMAIN: ${{ secrets.MICROCMS_SERVICE_DOMAIN || 'stub-domain' }}
-          MICROCMS_API_KEY: ${{ secrets.MICROCMS_API_KEY || 'stub-api-key-for-build-only' }}
+          MICROCMS_SERVICE_DOMAIN: ${{ secrets.MICROCMS_SERVICE_DOMAIN }}
+          MICROCMS_API_KEY: ${{ secrets.MICROCMS_API_KEY }}
         run: npm run build
 
   audit:
@@ -66,11 +83,11 @@ jobs:
     name: Playwright E2E
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: lint-and-build
-    # MICROCMS シークレットがあるときだけ E2E を走らせる。
-    # スタブでビルドした静的サイトに対して E2E を当てても、MicroCMS 連携部分の
-    # 描画が失敗してテストが安定しないため、実 API キーが必須。
-    if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
+    needs: lint
+    # MICROCMS の実 secrets がある場合のみ実行する。
+    # 全ページ SSG が MicroCMS を叩くため、スタブだと build 段階で 404 で落ちる。
+    # secrets が設定されていない PR では skip される。
+    if: ${{ vars.RUN_E2E_IN_CI == '1' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -89,8 +106,8 @@ jobs:
       - name: Run E2E
         env:
           CI: 'true'
-          MICROCMS_SERVICE_DOMAIN: ${{ secrets.MICROCMS_SERVICE_DOMAIN || 'stub-domain' }}
-          MICROCMS_API_KEY: ${{ secrets.MICROCMS_API_KEY || 'stub-api-key-for-build-only' }}
+          MICROCMS_SERVICE_DOMAIN: ${{ secrets.MICROCMS_SERVICE_DOMAIN }}
+          MICROCMS_API_KEY: ${{ secrets.MICROCMS_API_KEY }}
         run: npm run test:e2e
 
       - name: Upload Playwright report
