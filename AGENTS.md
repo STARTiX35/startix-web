@@ -19,4 +19,18 @@ Lint が現在唯一の自動チェックなので、コミット前に `npm run
 このリポジトリのコミットメッセージは短い日本語の説明文です（例: `イベントページのキャッシュ更新間隔を1時間に短縮`）。必ず `git checkout -b feature/<topic>` でブランチを切り、`git push origin feature/<topic>` でプッシュし、`main` への直接コミットは避けます。プルリクエストには要約、関連 Issue、UI 変更時のスクリーンショットや GIF、環境変数やマイグレーションの注意点を添え、単一の論点に絞ってレビュアが影響範囲を判断しやすくしてください。
 
 ## セキュリティと設定上の注意
-MicroCMS への接続には `NEXT_PUBLIC_MICROCMS_SERVICE_DOMAIN` と `NEXT_PUBLIC_MICROCMS_API_KEY` が必要です。値は `.env.local` に定義し、リポジトリには含めないでください。漏洩の疑いがある場合は MicroCMS ダッシュボードでキーを再発行し、古いキーを速やかに無効化します。新しい連携を導入する際は、設定手順を本書に追記し、ステージングと本番のシークレットが同期するようデプロイパイプラインを更新してください。
+MicroCMS への接続には `MICROCMS_SERVICE_DOMAIN` と `MICROCMS_API_KEY` が必要です。`NEXT_PUBLIC_` プレフィックスは付けないでください。`NEXT_PUBLIC_*` 変数は Next.js の仕様でブラウザ JS バンドルに埋め込まれてしまい、API キーが誰からでも参照可能になります。値は `.env.local` に定義し、リポジトリには含めないでください。
+
+`app/lib/microcms.ts` は `import 'server-only'` でガードしており、誤ってクライアントコンポーネントから import するとビルドエラーになります。MicroCMS にアクセスする処理はサーバーコンポーネント / Route Handler 内に閉じてください。
+
+漏洩の疑いがある場合は MicroCMS ダッシュボードでキーを再発行し、古いキーを速やかに無効化します。過去に `NEXT_PUBLIC_MICROCMS_API_KEY` として使っていたキーは、ビルド済みアセット（Vercel デプロイ履歴）にバンドルとして残っている可能性があるため、初回リリース時に必ずローテートしてください。新しい連携を導入する際は、設定手順を本書に追記し、ステージングと本番のシークレットが同期するようデプロイパイプラインを更新してください。
+
+### 必要な環境変数
+
+```
+# .env.local (リポジトリには含めない)
+MICROCMS_SERVICE_DOMAIN=your-service-domain
+MICROCMS_API_KEY=your-api-key
+```
+
+Vercel など本番環境でも `MICROCMS_SERVICE_DOMAIN` と `MICROCMS_API_KEY` で設定してください。旧 `NEXT_PUBLIC_*` 変数からはフォールバックで読みますが、互換維持のためであり、新規には使わないでください。
