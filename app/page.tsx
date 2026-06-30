@@ -13,7 +13,9 @@ import { Metadata } from "next";
 import RelativeLink from "./components/RelativeLink";
 
 // サーバーコンポーネントに変更（'use client'を削除）
-export const revalidate = 3600; // 1時間（秒単位）
+// On-Demand ISR (microCMS Webhook → /api/revalidate) で即時反映する。
+// 下記の数値は Webhook が万一失敗した場合のフォールバックの最大鮮度。
+export const revalidate = 86400; // 24時間（秒単位）。通常は webhook 経由で即時更新される
 
 export default async function Home() {
   // MicroCMSから次回のイベントを取得
