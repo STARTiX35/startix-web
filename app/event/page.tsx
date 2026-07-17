@@ -9,6 +9,7 @@ import {
 } from "react-icons/fa";
 import { client } from "../lib/microcms";
 import type { Event } from "../lib/microcms";
+import { safeHttpsUrl } from "../lib/safeUrl";
 // サーバーコンポーネントに変更
 // On-Demand ISR (microCMS Webhook → /api/revalidate) で即時反映する。
 // 下記の数値は Webhook が万一失敗した場合のフォールバックの最大鮮度。
@@ -20,6 +21,8 @@ export default async function EventPage() {
     queries: { filters: "category[contains]upcoming" },
   });
 
+  // 画像はCMS側で未入力でも落ちないようフォールバックを敷き、
+  // 外部URLは https scheme 検証（safeHttpsUrl）を通ったものだけ使う
   const upcomingEvents = response.contents.map((event: Event) => ({
     id: event.id,
     title: event.title,
@@ -32,9 +35,9 @@ export default async function EventPage() {
     time: `${event.startTime} - ${event.endTime}`,
     location: event.location,
     description: event.description,
-    image: event.imageUrl.url,
-    registrationUrl: event.registrationUrl,
-    detailsUrl: event.detailsUrl,
+    image: event.imageUrl?.url ?? "/images/events1.PNG",
+    registrationUrl: safeHttpsUrl(event.registrationUrl),
+    detailsUrl: safeHttpsUrl(event.detailsUrl),
   }));
 
   // 過去のイベントを取得
@@ -48,8 +51,8 @@ export default async function EventPage() {
     title: event.title,
     date: new Date(event.date).toLocaleDateString("ja-JP"),
     description: event.description,
-    image: event.imageUrl.url,
-    detailsUrl: event.detailsUrl,
+    image: event.imageUrl?.url ?? "/images/events1.PNG",
+    detailsUrl: safeHttpsUrl(event.detailsUrl),
   }));
 
   return (
@@ -128,22 +131,26 @@ export default async function EventPage() {
                           {event.description}
                         </p>
                         <div className="flex gap-4 mt-8">
-                          <a
-                            href={event.registrationUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
-                          >
-                            参加申し込み
-                          </a>
-                          <a
-                            href={event.detailsUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-6 py-3 border border-purple-600 text-purple-600 rounded-full hover:bg-purple-50 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all"
-                          >
-                            詳細を見る
-                          </a>
+                          {event.registrationUrl && (
+                            <a
+                              href={event.registrationUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
+                            >
+                              参加申し込み
+                            </a>
+                          )}
+                          {event.detailsUrl && (
+                            <a
+                              href={event.detailsUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-6 py-3 border border-purple-600 text-purple-600 rounded-full hover:bg-purple-50 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all"
+                            >
+                              詳細を見る
+                            </a>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -206,11 +213,14 @@ export default async function EventPage() {
             {pastEvents.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {pastEvents.map((event) => (
+                  // detailsUrl が未設定/不正なイベントはリンク先がないため "#" に留める
+                  // （target を付けないことで空タブが開くのを防ぐ）
                   <Link
-                    href={event.detailsUrl}
+                    href={event.detailsUrl ?? "#"}
                     key={event.id}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    {...(event.detailsUrl
+                      ? { target: "_blank", rel: "noopener noreferrer" }
+                      : {})}
                     className="bg-white rounded-3xl shadow-lg overflow-hidden transform transition-transform hover:scale-105 relative flex flex-col h-full"
                   >
                     <div className="absolute top-0 right-0 w-24 h-24 bg-purple-100 rounded-full opacity-50 -mr-12 -mt-12"></div>

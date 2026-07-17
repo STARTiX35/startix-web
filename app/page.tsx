@@ -1,7 +1,8 @@
 import React from "react";
 import Image from "next/image";
 import HeroSlideshow from "./components/HeroSlideshow";
-import { client, HeroImage } from "./lib/microcms";
+import { client, Event, HeroImage } from "./lib/microcms";
+import { safeHttpsUrl } from "./lib/safeUrl";
 import { Metadata } from "next";
 import RelativeLink from "./components/RelativeLink";
 
@@ -12,16 +13,22 @@ export const revalidate = 86400; // 24時間（秒単位）。通常は webhook 
 
 export default async function Home() {
   // MicroCMSから次回のイベントを取得
-  const response = await client.getList({
+  // 型引数を明示しないと contents が any になり、
+  // フィールド欠落時の null ガード漏れをコンパイラが検出できない
+  const response = await client.getList<Event>({
     endpoint: "events",
     queries: { filters: "category[contains]upcoming", limit: 1 },
   });
   const nextEvent = response.contents[0];
 
   // ヒーロー画像を取得
-  const heroImages = await client.getList({
+  const heroImages = await client.getList<HeroImage>({
     endpoint: "hero",
   });
+
+  // CMS由来の外部URLは https scheme 検証を通ったものだけリンクとして描画する
+  const registrationUrl = safeHttpsUrl(nextEvent?.registrationUrl);
+  const detailsUrl = safeHttpsUrl(nextEvent?.detailsUrl);
 
   return (
     <div className="min-h-screen bg-white">
@@ -161,29 +168,33 @@ export default async function Home() {
                       {nextEvent.description}
                     </p>
                     <div className="flex gap-4 mt-8">
-                      <a
-                        href={nextEvent.registrationUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
-                      >
-                        参加申し込み
-                      </a>
-                      <a
-                        href={nextEvent.detailsUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-6 py-3 border border-purple-600 text-purple-600 rounded-full hover:bg-purple-50 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all"
-                      >
-                        詳細を見る
-                      </a>
+                      {registrationUrl && (
+                        <a
+                          href={registrationUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
+                        >
+                          参加申し込み
+                        </a>
+                      )}
+                      {detailsUrl && (
+                        <a
+                          href={detailsUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-6 py-3 border border-purple-600 text-purple-600 rounded-full hover:bg-purple-50 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all"
+                        >
+                          詳細を見る
+                        </a>
+                      )}
                     </div>
                   </div>
                 </div>
                 <div className="order-1 md:order-2 bg-black rounded-3xl shadow-lg overflow-hidden transform transition-transform hover:scale-105 relative h-48 md:h-auto">
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
                   <Image
-                    src={nextEvent.imageUrl.url}
+                    src={nextEvent.imageUrl?.url ?? "/images/events1.PNG"}
                     alt={nextEvent.title}
                     width={600}
                     height={800}
@@ -465,7 +476,9 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'STARTiX - 筑波大学の起業サークル',
     description: '起業を志す大学生が集まり、本気で夢を語り合えるコミュニティ。',
-    url: 'https://startix-web-iota.vercel.app/',
+    // 相対パスは layout.tsx の metadataBase (startix-tsukuba.net) で解決される。
+    // 旧Vercel URLのハードコードはSNSクローラーに旧ドメインを正規として渡すため廃止
+    url: '/',
     siteName: 'STARTiX',
     locale: 'ja_JP',
     type: 'website',

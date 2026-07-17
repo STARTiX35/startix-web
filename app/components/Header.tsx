@@ -13,7 +13,9 @@ const NAV_ITEMS = [
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const pathname = usePathname();
+  // usePathname はハイドレーション前に null を返し得るため "/" にフォールバック
+  // （RelativeLink.tsx と同じガード。片方だけ無防備だと isActive が throw する）
+  const pathname = usePathname() ?? "/";
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);

@@ -41,13 +41,16 @@ export type Event = {
   location: string;
   category: string[];
   eventType: string[];
-  imageUrl: {
+  // 以下3つは microCMS 側で未入力のまま公開できるフィールドのため optional。
+  // required 扱いにすると、編集者が画像や URL を空にした瞬間に
+  // ページ全体が 500 になる（実際に起こり得る運用ミス）。
+  imageUrl?: {
     url: string;
     height: number;
     width: number;
   };
-  registrationUrl: string;
-  detailsUrl: string;
+  registrationUrl?: string;
+  detailsUrl?: string;
 };
 
 export type HeroImage = {
