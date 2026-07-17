@@ -2,15 +2,11 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
-  FaInstagram,
-  FaTwitter,
-  FaFacebookF,
   FaCalendarAlt,
   FaClock,
   FaMapMarkerAlt,
   FaArrowRight,
 } from "react-icons/fa";
-import Header from "../components/Header";
 import { client } from "../lib/microcms";
 import type { Event } from "../lib/microcms";
 // サーバーコンポーネントに変更
@@ -58,7 +54,9 @@ export default async function EventPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="pt-0 md:pt-16">
+      {/* ヘッダー分の余白は Header コンポーネント側のスペーサーで確保済み。
+          ここで pt を足すと二重になり、ヘッダー下に不自然な空白ができる（2026-07-17 修正） */}
+      <div>
         {/* ヒーローセクション */}
         <div className="relative bg-gradient-to-br from-purple-50 to-blue-50 py-20 overflow-hidden">
           <div className="absolute inset-0 bg-[url('/images/pattern.svg')] opacity-5"></div>
@@ -97,64 +95,70 @@ export default async function EventPage() {
             </div>
 
             {upcomingEvents.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              /* イベントが複数あっても崩れないよう、
+                 「詳細カード + 画像」を1イベント1行のペアで描画する（2026-07-17 修正）。
+                 以前は全カードを1つのグリッドに流し込み、画像は先頭イベントの1枚だけを
+                 別セルに置いていたため、2件以上あると画像が孤立してズレていた */
+              <div className="space-y-12">
                 {upcomingEvents.map((event) => (
                   <div
                     key={event.id}
-                    className="order-2 md:order-1 bg-white rounded-3xl shadow-lg p-8 transform transition-transform hover:scale-105 relative overflow-hidden"
+                    className="grid grid-cols-1 md:grid-cols-2 gap-8"
                   >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-purple-100 rounded-full opacity-50 -mr-16 -mt-16"></div>
-                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-100 rounded-full opacity-50 -ml-16 -mb-16"></div>
-                    <div className="space-y-4 relative z-10">
-                      <div className="flex items-center text-purple-600">
-                        <FaCalendarAlt className="h-6 w-6 mr-2" />
-                        <span>{event.date}</span>
+                    <div className="order-2 md:order-1 bg-white rounded-3xl shadow-lg p-8 transform transition-transform hover:scale-105 relative overflow-hidden">
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-purple-100 rounded-full opacity-50 -mr-16 -mt-16"></div>
+                      <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-100 rounded-full opacity-50 -ml-16 -mb-16"></div>
+                      <div className="space-y-4 relative z-10">
+                        <div className="flex items-center text-purple-600">
+                          <FaCalendarAlt className="h-6 w-6 mr-2" />
+                          <span>{event.date}</span>
+                        </div>
+                        <div className="flex items-center text-purple-600">
+                          <FaClock className="h-6 w-6 mr-2" />
+                          <span>{event.time}</span>
+                        </div>
+                        <div className="flex items-center text-purple-600">
+                          <FaMapMarkerAlt className="h-6 w-6 mr-2" />
+                          <span>{event.location}</span>
+                        </div>
+                        <h3 className="text-xl md:text-2xl font-bold mt-6 mb-4">
+                          {event.title}
+                        </h3>
+                        <p className="text-gray-600 text-base md:text-lg">
+                          {event.description}
+                        </p>
+                        <div className="flex gap-4 mt-8">
+                          <a
+                            href={event.registrationUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
+                          >
+                            参加申し込み
+                          </a>
+                          <a
+                            href={event.detailsUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-6 py-3 border border-purple-600 text-purple-600 rounded-full hover:bg-purple-50 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all"
+                          >
+                            詳細を見る
+                          </a>
+                        </div>
                       </div>
-                      <div className="flex items-center text-purple-600">
-                        <FaClock className="h-6 w-6 mr-2" />
-                        <span>{event.time}</span>
-                      </div>
-                      <div className="flex items-center text-purple-600">
-                        <FaMapMarkerAlt className="h-6 w-6 mr-2" />
-                        <span>{event.location}</span>
-                      </div>
-                      <h3 className="text-xl md:text-2xl font-bold mt-6 mb-4">
-                        {event.title}
-                      </h3>
-                      <p className="text-gray-600 text-base md:text-lg">
-                        {event.description}
-                      </p>
-                      <div className="flex gap-4 mt-8">
-                        <a
-                          href={event.registrationUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all"
-                        >
-                          参加申し込み
-                        </a>
-                        <a
-                          href={event.detailsUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="px-6 py-3 border border-purple-600 text-purple-600 rounded-full hover:bg-purple-50 transition-colors shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all"
-                        >
-                          詳細を見る
-                        </a>
-                      </div>
+                    </div>
+                    <div className="order-1 md:order-2 bg-black rounded-3xl shadow-lg overflow-hidden transform transition-transform hover:scale-105 relative h-48 md:h-auto">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
+                      <Image
+                        src={event.image}
+                        alt={event.title}
+                        width={600}
+                        height={800}
+                        className="w-full h-full object-contain"
+                      />
                     </div>
                   </div>
                 ))}
-                <div className="order-1 md:order-2 bg-black rounded-3xl shadow-lg overflow-hidden transform transition-transform hover:scale-105 relative h-48 md:h-auto">
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
-                  <Image
-                    src={upcomingEvents[0]?.image || "/images/events1.PNG"}
-                    alt={upcomingEvents[0]?.title || "イベント画像"}
-                    width={600}
-                    height={800}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
               </div>
             ) : (
               <div className="text-center bg-gray-50 rounded-3xl p-12">

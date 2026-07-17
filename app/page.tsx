@@ -1,14 +1,7 @@
 import React from "react";
 import Image from "next/image";
-import {
-  FaInstagram,
-  FaTwitter,
-  FaFacebookF,
-  FaClock,
-  FaMapMarkerAlt,
-} from "react-icons/fa";
 import HeroSlideshow from "./components/HeroSlideshow";
-import { client, Event, HeroImage } from "./lib/microcms";
+import { client, HeroImage } from "./lib/microcms";
 import { Metadata } from "next";
 import RelativeLink from "./components/RelativeLink";
 
@@ -32,8 +25,9 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* メインコンテンツの開始位置を調整 */}
-      <div className="pt-0 md:pt-16">
+      {/* ヘッダー分の余白は Header コンポーネント側のスペーサーで確保済み。
+          ここで pt を足すと二重になり、ヘッダー下に不自然な空白ができる（2026-07-17 修正） */}
+      <div>
         {/* ヒーローセクション */}
         <div className="relative bg-gradient-to-br from-purple-50 to-blue-50 min-h-[600px] overflow-hidden">
           <div className="container mx-auto px-4 py-20 relative z-10">
@@ -60,7 +54,7 @@ export default async function Home() {
                 </p>
                 <RelativeLink
                   href="/event"
-                  className="inline-flex items-center px-8 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all"
+                  className="inline-flex items-center px-8 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
                 >
                   次回イベントに参加
                 </RelativeLink>
@@ -171,7 +165,7 @@ export default async function Home() {
                         href={nextEvent.registrationUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all"
+                        className="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
                       >
                         参加申し込み
                       </a>
@@ -179,7 +173,7 @@ export default async function Home() {
                         href={nextEvent.detailsUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-6 py-3 border border-purple-600 text-purple-600 rounded-full hover:bg-purple-50 transition-colors shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all"
+                        className="px-6 py-3 border border-purple-600 text-purple-600 rounded-full hover:bg-purple-50 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all"
                       >
                         詳細を見る
                       </a>
@@ -330,17 +324,18 @@ export default async function Home() {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row justify-center gap-8 sm:gap-20 mt-16">
-              <div className="text-center bg-white rounded-3xl p-6 sm:p-8 shadow-lg w-full sm:w-auto">
-                <div className="text-2xl md:text-3xl sm:text-4xl font-bold text-purple-600 mb-2">
+            {/* 実績カード: 中身の文字量でカード幅が変わってズレないよう、等幅グリッドで揃える */}
+            <div className="grid grid-cols-2 gap-6 sm:gap-8 max-w-lg mx-auto mt-16">
+              <div className="text-center bg-white rounded-3xl p-6 sm:p-8 shadow-lg">
+                <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">
                   15+
                 </div>
                 <p className="text-gray-600 text-sm md:text-base">
                   アクティブメンバー
                 </p>
               </div>
-              <div className="text-center bg-white rounded-3xl p-6 sm:p-8 shadow-lg w-full sm:w-auto">
-                <div className="text-2xl md:text-3xl sm:text-4xl font-bold text-purple-600 mb-2">
+              <div className="text-center bg-white rounded-3xl p-6 sm:p-8 shadow-lg">
+                <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">
                   20+
                 </div>
                 <p className="text-gray-600 text-sm md:text-base">
@@ -368,7 +363,8 @@ export default async function Home() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            {/* タブレット幅で4列は窮屈になるため 2列 → 4列 の段階的グリッドにする */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               <div className="bg-white rounded-3xl shadow-lg overflow-hidden relative">
                 <div className="relative h-64 bg-gray-200">
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>

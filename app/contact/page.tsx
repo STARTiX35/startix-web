@@ -1,34 +1,19 @@
 import React from "react";
-import Link from "next/link";
-import {
-  FaInstagram,
-  FaEnvelope,
-  FaClock,
-  FaMapMarkerAlt,
-  FaTwitter,
-  FaFacebookF,
-} from "react-icons/fa";
-import Header from "../components/Header";
-import Image from "next/image";
-import { client } from "../lib/microcms";
+import { FaInstagram, FaEnvelope, FaClock, FaArrowRight } from "react-icons/fa";
+import RelativeLink from "../components/RelativeLink";
 
-export default async function Contact() {
-  // MicroCMSから次回のイベントを取得
-  const response = await client.get({
-    endpoint: "events",
-    queries: { filters: "category[contains]upcoming", limit: 1 },
-  });
-  const nextEvent = response.contents[0];
-
+// イベント詳細はホームとイベントページに集約する方針にしたため、
+// このページの「次回のイベント」ブロックと MicroCMS fetch は削除した（2026-07-17）。
+// これによりお問い合わせページは CMS 非依存の静的ページになる。
+export default function Contact() {
   return (
-    <div className="min-h-screen bg-white">
-      {/* ヘッダー */}
-      <div className="bg-gradient-to-r from-purple-600 via-blue-500 to-cyan-400"></div>
-
+    // 背景が真っ白だと白いカードが埋もれて境界が見えないため、
+    // 他ページのヒーローと同じ薄紫グラデーションを敷いてカードを浮かせる（2026-07-17 修正）
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
       <main className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
           {/* お気軽にご連絡ください セクション */}
-          <div className="bg-white rounded-3xl shadow-lg p-8 mb-12">
+          <div className="bg-white rounded-3xl shadow-lg p-8">
             <h2 className="text-3xl font-bold text-center mb-6">
               お気軽にご連絡下さい
             </h2>
@@ -60,9 +45,11 @@ export default async function Contact() {
               </a>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* 固定マージン（ml-[200px]）での位置合わせは画面幅でズレるため、
+                コンテンツ幅を絞って中央寄せする方式に変更（2026-07-17 修正） */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-xl mx-auto">
               {/* メールアドレス */}
-              <div className="flex items-start space-x-4 md:ml-[200px]">
+              <div className="flex items-start space-x-4">
                 <FaEnvelope className="text-purple-600 text-xl mt-1" />
                 <div>
                   <h3 className="font-bold mb-2">メールアドレス</h3>
@@ -88,65 +75,16 @@ export default async function Contact() {
             </div>
           </div>
 
-          {/* 次回のイベント - MicroCMSデータを使用 */}
-          {nextEvent && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="order-2 md:order-1 bg-white rounded-3xl shadow-lg p-8">
-                <h2 className="text-2xl font-bold mb-6">次回のイベント</h2>
-                <div className="space-y-4">
-                  <div className="flex items-center text-purple-600">
-                    <FaClock className="mr-2" />
-                    <span>
-                      {new Date(nextEvent.date).toLocaleDateString("ja-JP", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                        weekday: "short",
-                      })}
-                    </span>
-                  </div>
-                  <div className="flex items-center text-purple-600">
-                    <FaClock className="mr-2" />
-                    <span>{`${nextEvent.startTime} - ${nextEvent.endTime}`}</span>
-                  </div>
-                  <div className="flex items-center text-purple-600">
-                    <FaMapMarkerAlt className="mr-2" />
-                    <span>{nextEvent.location}</span>
-                  </div>
-                  <h3 className="text-xl font-bold mt-4">{nextEvent.title}</h3>
-                  <p className="text-gray-600 mt-2">{nextEvent.description}</p>
-                  <div className="flex gap-4 mt-8">
-                    <a
-                      href={nextEvent.registrationUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all"
-                    >
-                      参加申し込み
-                    </a>
-                    <a
-                      href={nextEvent.detailsUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-6 py-3 border border-purple-600 text-purple-600 rounded-full hover:bg-purple-50 transition-colors shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all"
-                    >
-                      詳細を見る
-                    </a>
-                  </div>
-                </div>
-              </div>
-              <div className="order-1 md:order-2 bg-black rounded-3xl shadow-lg overflow-hidden h-48 md:h-auto relative">
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
-                <Image
-                  src={nextEvent.imageUrl.url}
-                  alt={nextEvent.title}
-                  width={600}
-                  height={800}
-                  className="w-full h-full object-contain"
-                />
-              </div>
-            </div>
-          )}
+          {/* イベントへの導線は1行リンクだけ残す */}
+          <div className="text-center mt-10">
+            <RelativeLink
+              href="/event"
+              className="inline-flex items-center text-purple-600 font-medium hover:text-purple-700 transition-colors"
+            >
+              イベント情報を見る
+              <FaArrowRight className="ml-2" />
+            </RelativeLink>
+          </div>
         </div>
       </main>
     </div>
