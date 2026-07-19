@@ -1,14 +1,8 @@
 import React from "react";
 import Image from "next/image";
-import {
-  FaInstagram,
-  FaTwitter,
-  FaFacebookF,
-  FaClock,
-  FaMapMarkerAlt,
-} from "react-icons/fa";
 import HeroSlideshow from "./components/HeroSlideshow";
 import { client, Event, HeroImage } from "./lib/microcms";
+import { safeHttpsUrl } from "./lib/safeUrl";
 import { Metadata } from "next";
 import RelativeLink from "./components/RelativeLink";
 
@@ -18,22 +12,42 @@ import RelativeLink from "./components/RelativeLink";
 export const revalidate = 86400; // 24時間（秒単位）。通常は webhook 経由で即時更新される
 
 export default async function Home() {
-  // MicroCMSから次回のイベントを取得
-  const response = await client.getList({
-    endpoint: "events",
-    queries: { filters: "category[contains]upcoming", limit: 1 },
-  });
-  const nextEvent = response.contents[0];
+  // MicroCMSから次回のイベントとヒーロー画像を取得する。
+  // fetch 失敗でビルド(SSG)ごと落とさないよう try/catch で受け、空状態にフォールバックする。
+  // 実害: 2026-06-30以降、ビルド時の microCMS fetch が "Network Error" になると
+  // Vercel デプロイ全体が失敗していた。ISR (webhook + revalidate) があるので、
+  // 一時的に空でも CMS 復旧後の再生成で内容は戻る。
+  // 型引数を明示しないと contents が any になり、
+  // フィールド欠落時の null ガード漏れをコンパイラが検出できない
+  let nextEvent: Event | undefined;
+  let heroImageList: HeroImage[] = [];
+  try {
+    const response = await client.getList<Event>({
+      endpoint: "events",
+      queries: { filters: "category[contains]upcoming", limit: 1 },
+    });
+    nextEvent = response.contents[0];
+  } catch (error) {
+    console.error("microCMS events fetch failed (home) — 空状態で描画継続:", error);
+  }
+  try {
+    const heroImages = await client.getList<HeroImage>({
+      endpoint: "hero",
+    });
+    heroImageList = heroImages.contents;
+  } catch (error) {
+    console.error("microCMS hero fetch failed — スライドショーなしで描画継続:", error);
+  }
 
-  // ヒーロー画像を取得
-  const heroImages = await client.getList({
-    endpoint: "hero",
-  });
+  // CMS由来の外部URLは https scheme 検証を通ったものだけリンクとして描画する
+  const registrationUrl = safeHttpsUrl(nextEvent?.registrationUrl);
+  const detailsUrl = safeHttpsUrl(nextEvent?.detailsUrl);
 
   return (
     <div className="min-h-screen bg-white">
-      {/* メインコンテンツの開始位置を調整 */}
-      <div className="pt-0 md:pt-16">
+      {/* ヘッダー分の余白は Header コンポーネント側のスペーサーで確保済み。
+          ここで pt を足すと二重になり、ヘッダー下に不自然な空白ができる（2026-07-17 修正） */}
+      <div>
         {/* ヒーローセクション */}
         <div className="relative bg-gradient-to-br from-purple-50 to-blue-50 min-h-[600px] overflow-hidden">
           <div className="container mx-auto px-4 py-20 relative z-10">
@@ -60,16 +74,16 @@ export default async function Home() {
                 </p>
                 <RelativeLink
                   href="/event"
-                  className="inline-flex items-center px-8 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all"
+                  className="inline-flex items-center px-8 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
                 >
                   次回イベントに参加
                 </RelativeLink>
               </div>
               <div className="relative order-1 md:order-2 h-[400px] md:h-[500px]">
                 <HeroSlideshow
-                  images={heroImages.contents.map(
-                    (item: HeroImage) => item.image
-                  )}
+                  images={heroImageList
+                    .map((item) => item.image)
+                    .filter((image) => Boolean(image))}
                 />
               </div>
             </div>
@@ -167,29 +181,33 @@ export default async function Home() {
                       {nextEvent.description}
                     </p>
                     <div className="flex gap-4 mt-8">
-                      <a
-                        href={nextEvent.registrationUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all"
-                      >
-                        参加申し込み
-                      </a>
-                      <a
-                        href={nextEvent.detailsUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-6 py-3 border border-purple-600 text-purple-600 rounded-full hover:bg-purple-50 transition-colors shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all"
-                      >
-                        詳細を見る
-                      </a>
+                      {registrationUrl && (
+                        <a
+                          href={registrationUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
+                        >
+                          参加申し込み
+                        </a>
+                      )}
+                      {detailsUrl && (
+                        <a
+                          href={detailsUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-6 py-3 border border-purple-600 text-purple-600 rounded-full hover:bg-purple-50 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all"
+                        >
+                          詳細を見る
+                        </a>
+                      )}
                     </div>
                   </div>
                 </div>
                 <div className="order-1 md:order-2 bg-black rounded-3xl shadow-lg overflow-hidden transform transition-transform hover:scale-105 relative h-48 md:h-auto">
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
                   <Image
-                    src={nextEvent.imageUrl.url}
+                    src={nextEvent.imageUrl?.url ?? "/images/events1.PNG"}
                     alt={nextEvent.title}
                     width={600}
                     height={800}
@@ -330,17 +348,18 @@ export default async function Home() {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row justify-center gap-8 sm:gap-20 mt-16">
-              <div className="text-center bg-white rounded-3xl p-6 sm:p-8 shadow-lg w-full sm:w-auto">
-                <div className="text-2xl md:text-3xl sm:text-4xl font-bold text-purple-600 mb-2">
+            {/* 実績カード: 中身の文字量でカード幅が変わってズレないよう、等幅グリッドで揃える */}
+            <div className="grid grid-cols-2 gap-6 sm:gap-8 max-w-lg mx-auto mt-16">
+              <div className="text-center bg-white rounded-3xl p-6 sm:p-8 shadow-lg">
+                <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">
                   15+
                 </div>
                 <p className="text-gray-600 text-sm md:text-base">
                   アクティブメンバー
                 </p>
               </div>
-              <div className="text-center bg-white rounded-3xl p-6 sm:p-8 shadow-lg w-full sm:w-auto">
-                <div className="text-2xl md:text-3xl sm:text-4xl font-bold text-purple-600 mb-2">
+              <div className="text-center bg-white rounded-3xl p-6 sm:p-8 shadow-lg">
+                <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">
                   20+
                 </div>
                 <p className="text-gray-600 text-sm md:text-base">
@@ -368,7 +387,8 @@ export default async function Home() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            {/* タブレット幅で4列は窮屈になるため 2列 → 4列 の段階的グリッドにする */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               <div className="bg-white rounded-3xl shadow-lg overflow-hidden relative">
                 <div className="relative h-64 bg-gray-200">
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
@@ -469,7 +489,9 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'STARTiX - 筑波大学の起業サークル',
     description: '起業を志す大学生が集まり、本気で夢を語り合えるコミュニティ。',
-    url: 'https://startix-web-iota.vercel.app/',
+    // 相対パスは layout.tsx の metadataBase (startix-tsukuba.net) で解決される。
+    // 旧Vercel URLのハードコードはSNSクローラーに旧ドメインを正規として渡すため廃止
+    url: '/',
     siteName: 'STARTiX',
     locale: 'ja_JP',
     type: 'website',

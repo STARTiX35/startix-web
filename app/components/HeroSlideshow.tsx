@@ -11,6 +11,8 @@ export default function HeroSlideshow({ images }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
+    // 画像0枚のとき (prev + 1) % 0 が NaN になり index が壊れるため、タイマー自体を張らない
+    if (images.length === 0) return;
     const timer = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
     }, 5000); // 5秒ごとに画像を切り替え
