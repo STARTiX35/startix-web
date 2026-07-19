@@ -12,19 +12,32 @@ import RelativeLink from "./components/RelativeLink";
 export const revalidate = 86400; // 24時間（秒単位）。通常は webhook 経由で即時更新される
 
 export default async function Home() {
-  // MicroCMSから次回のイベントを取得
+  // MicroCMSから次回のイベントとヒーロー画像を取得する。
+  // fetch 失敗でビルド(SSG)ごと落とさないよう try/catch で受け、空状態にフォールバックする。
+  // 実害: 2026-06-30以降、ビルド時の microCMS fetch が "Network Error" になると
+  // Vercel デプロイ全体が失敗していた。ISR (webhook + revalidate) があるので、
+  // 一時的に空でも CMS 復旧後の再生成で内容は戻る。
   // 型引数を明示しないと contents が any になり、
   // フィールド欠落時の null ガード漏れをコンパイラが検出できない
-  const response = await client.getList<Event>({
-    endpoint: "events",
-    queries: { filters: "category[contains]upcoming", limit: 1 },
-  });
-  const nextEvent = response.contents[0];
-
-  // ヒーロー画像を取得
-  const heroImages = await client.getList<HeroImage>({
-    endpoint: "hero",
-  });
+  let nextEvent: Event | undefined;
+  let heroImageList: HeroImage[] = [];
+  try {
+    const response = await client.getList<Event>({
+      endpoint: "events",
+      queries: { filters: "category[contains]upcoming", limit: 1 },
+    });
+    nextEvent = response.contents[0];
+  } catch (error) {
+    console.error("microCMS events fetch failed (home) — 空状態で描画継続:", error);
+  }
+  try {
+    const heroImages = await client.getList<HeroImage>({
+      endpoint: "hero",
+    });
+    heroImageList = heroImages.contents;
+  } catch (error) {
+    console.error("microCMS hero fetch failed — スライドショーなしで描画継続:", error);
+  }
 
   // CMS由来の外部URLは https scheme 検証を通ったものだけリンクとして描画する
   const registrationUrl = safeHttpsUrl(nextEvent?.registrationUrl);
@@ -68,9 +81,9 @@ export default async function Home() {
               </div>
               <div className="relative order-1 md:order-2 h-[400px] md:h-[500px]">
                 <HeroSlideshow
-                  images={heroImages.contents.map(
-                    (item: HeroImage) => item.image
-                  )}
+                  images={heroImageList
+                    .map((item) => item.image)
+                    .filter((image) => Boolean(image))}
                 />
               </div>
             </div>

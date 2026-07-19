@@ -15,15 +15,34 @@ import { safeHttpsUrl } from "../lib/safeUrl";
 // 下記の数値は Webhook が万一失敗した場合のフォールバックの最大鮮度。
 export const revalidate = 86400; // 24時間（秒単位）。通常は webhook 経由で即時更新される
 export default async function EventPage() {
-  // MicroCMSからデータを取得
-  const response = await client.getList({
-    endpoint: "events",
-    queries: { filters: "category[contains]upcoming" },
-  });
+  // MicroCMSからデータを取得する。
+  // fetch 失敗でビルド(SSG)ごと落とさないよう try/catch で受け、空リストにフォールバックする。
+  // 実害: ビルド時の fetch が "Network Error" になると Vercel デプロイ全体が失敗していた
+  // (2026-07-17 の PR #16 プレビューで発生)。ISR があるので CMS 復旧後の再生成で内容は戻る。
+  let upcomingContents: Event[] = [];
+  let pastContents: Event[] = [];
+  try {
+    const response = await client.getList<Event>({
+      endpoint: "events",
+      queries: { filters: "category[contains]upcoming" },
+    });
+    upcomingContents = response.contents;
+  } catch (error) {
+    console.error("microCMS events fetch failed (upcoming) — 空状態で描画継続:", error);
+  }
+  try {
+    const pastResponse = await client.getList<Event>({
+      endpoint: "events",
+      queries: { filters: "category[not_contains]upcoming" },
+    });
+    pastContents = pastResponse.contents;
+  } catch (error) {
+    console.error("microCMS events fetch failed (past) — 空状態で描画継続:", error);
+  }
 
   // 画像はCMS側で未入力でも落ちないようフォールバックを敷き、
   // 外部URLは https scheme 検証（safeHttpsUrl）を通ったものだけ使う
-  const upcomingEvents = response.contents.map((event: Event) => ({
+  const upcomingEvents = upcomingContents.map((event: Event) => ({
     id: event.id,
     title: event.title,
     date: new Date(event.date).toLocaleDateString("ja-JP", {
@@ -40,13 +59,7 @@ export default async function EventPage() {
     detailsUrl: safeHttpsUrl(event.detailsUrl),
   }));
 
-  // 過去のイベントを取得
-  const pastResponse = await client.getList({
-    endpoint: "events",
-    queries: { filters: "category[not_contains]upcoming" },
-  });
-
-  const pastEvents = pastResponse.contents.map((event: Event) => ({
+  const pastEvents = pastContents.map((event: Event) => ({
     id: event.id,
     title: event.title,
     date: new Date(event.date).toLocaleDateString("ja-JP"),
