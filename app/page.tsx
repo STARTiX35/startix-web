@@ -429,7 +429,7 @@ export default async function Home() {
                     庄司 悠太郎
                   </p>
                   <p className="text-gray-600 text-sm md:text-base">
-                    社会工学類3年生。インターンシップ経験、起業準備中。いつも笑顔なムードメーカー。長期休みに海外ボランティアに取り組むグローバルな視点を持つ。
+                    社会工学類4年生。インターンシップ経験、起業準備中。いつも笑顔なムードメーカー。長期休みに海外ボランティアに取り組むグローバルな視点を持つ。
                   </p>
                 </div>
               </div>
@@ -471,7 +471,7 @@ export default async function Home() {
                   </div>
                   <p className="text-lg md:text-xl font-bold mb-2">森 丈耀</p>
                   <p className="text-gray-600 text-sm md:text-base">
-                    東京大学農学部3年生。食に関する環境問題に取り組んでいる。どこからでも参加する、やる気No.1。STARTiXの財務を担当。
+                    東京大学農学部4年生。食に関する環境問題に取り組んでいる。どこからでも参加する、やる気No.1。STARTiXの財務を担当。
                   </p>
                 </div>
               </div>
