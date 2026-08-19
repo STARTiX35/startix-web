@@ -352,7 +352,7 @@ export default async function Home() {
             <div className="grid grid-cols-2 gap-6 sm:gap-8 max-w-lg mx-auto mt-16">
               <div className="text-center bg-white rounded-3xl p-6 sm:p-8 shadow-lg">
                 <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">
-                  15+
+                  20+
                 </div>
                 <p className="text-gray-600 text-sm md:text-base">
                   アクティブメンバー
