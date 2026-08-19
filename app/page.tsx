@@ -3,6 +3,7 @@ import Image from "next/image";
 import HeroSlideshow from "./components/HeroSlideshow";
 import { client, Event, HeroImage } from "./lib/microcms";
 import { safeHttpsUrl } from "./lib/safeUrl";
+import { splitEventsBySchedule } from "./lib/eventSchedule";
 import { Metadata } from "next";
 import RelativeLink from "./components/RelativeLink";
 
@@ -22,11 +23,15 @@ export default async function Home() {
   let nextEvent: Event | undefined;
   let heroImageList: HeroImage[] = [];
   try {
+    // 「次回のイベント」は microCMS の category ではなく開催日で決める。
+    // category 方式は編集者の切り替え待ちで終了済みイベントが残り続けた
+    // （/event と同じ事故。判定は app/lib/eventSchedule.js に集約）。
+    // 開催日順に並ばない可能性があるため、絞り込みはこちらで行う。
     const response = await client.getList<Event>({
       endpoint: "events",
-      queries: { filters: "category[contains]upcoming", limit: 1 },
+      queries: { limit: 100 },
     });
-    nextEvent = response.contents[0];
+    nextEvent = splitEventsBySchedule(response.contents).upcoming[0];
   } catch (error) {
     console.error("microCMS events fetch failed (home) — 空状態で描画継続:", error);
   }
@@ -127,6 +132,8 @@ export default async function Home() {
                       </svg>
                       <span>
                         {new Date(nextEvent.date).toLocaleDateString("ja-JP", {
+                          // Vercel のサーバは UTC で動くため、指定しないと前日にずれる
+                          timeZone: "Asia/Tokyo",
                           year: "numeric",
                           month: "long",
                           day: "numeric",

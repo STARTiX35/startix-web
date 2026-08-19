@@ -34,6 +34,9 @@ jobs:
       - name: Check internal links use RelativeLink
         run: node tests/check-relative-paths.test.mjs
 
+      - name: Unit tests
+        run: node --test tests/event-schedule.test.mjs
+
   build:
     name: Build
     runs-on: ubuntu-latest

@@ -10,6 +10,7 @@ import {
 import { client } from "../lib/microcms";
 import type { Event } from "../lib/microcms";
 import { safeHttpsUrl } from "../lib/safeUrl";
+import { splitEventsBySchedule } from "../lib/eventSchedule";
 // サーバーコンポーネントに変更
 // On-Demand ISR (microCMS Webhook → /api/revalidate) で即時反映する。
 // 下記の数値は Webhook が万一失敗した場合のフォールバックの最大鮮度。
@@ -19,26 +20,24 @@ export default async function EventPage() {
   // fetch 失敗でビルド(SSG)ごと落とさないよう try/catch で受け、空リストにフォールバックする。
   // 実害: ビルド時の fetch が "Network Error" になると Vercel デプロイ全体が失敗していた
   // (2026-07-17 の PR #16 プレビューで発生)。ISR があるので CMS 復旧後の再生成で内容は戻る。
-  let upcomingContents: Event[] = [];
-  let pastContents: Event[] = [];
+  // 開催予定か過去かは microCMS の category ではなく開催日から判定する。
+  // category 方式は編集者が手で切り替えるまで終了済みイベントが
+  // 「次回のイベント」に残り続けた（2026-07-26 のイベントが 8/19 時点で表示されていた）。
+  // 判定ロジックとテストは app/lib/eventSchedule.js / tests/event-schedule.test.mjs。
+  let allContents: Event[] = [];
   try {
+    // 既定の limit は 10 件。過去イベントが増えると古いものから取りこぼすため明示する
     const response = await client.getList<Event>({
       endpoint: "events",
-      queries: { filters: "category[contains]upcoming" },
+      queries: { limit: 100 },
     });
-    upcomingContents = response.contents;
+    allContents = response.contents;
   } catch (error) {
-    console.error("microCMS events fetch failed (upcoming) — 空状態で描画継続:", error);
+    console.error("microCMS events fetch failed — 空状態で描画継続:", error);
   }
-  try {
-    const pastResponse = await client.getList<Event>({
-      endpoint: "events",
-      queries: { filters: "category[not_contains]upcoming" },
-    });
-    pastContents = pastResponse.contents;
-  } catch (error) {
-    console.error("microCMS events fetch failed (past) — 空状態で描画継続:", error);
-  }
+
+  const { upcoming: upcomingContents, past: pastContents } =
+    splitEventsBySchedule(allContents);
 
   // 画像はCMS側で未入力でも落ちないようフォールバックを敷き、
   // 外部URLは https scheme 検証（safeHttpsUrl）を通ったものだけ使う
@@ -46,6 +45,7 @@ export default async function EventPage() {
     id: event.id,
     title: event.title,
     date: new Date(event.date).toLocaleDateString("ja-JP", {
+      timeZone: "Asia/Tokyo",
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -62,7 +62,9 @@ export default async function EventPage() {
   const pastEvents = pastContents.map((event: Event) => ({
     id: event.id,
     title: event.title,
-    date: new Date(event.date).toLocaleDateString("ja-JP"),
+    date: new Date(event.date).toLocaleDateString("ja-JP", {
+      timeZone: "Asia/Tokyo",
+    }),
     description: event.description,
     image: event.imageUrl?.url ?? "/images/events1.PNG",
     detailsUrl: safeHttpsUrl(event.detailsUrl),
