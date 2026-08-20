@@ -3,6 +3,8 @@ import Image from "next/image";
 import HeroSlideshow from "./components/HeroSlideshow";
 import { client, Event, HeroImage } from "./lib/microcms";
 import { safeHttpsUrl } from "./lib/safeUrl";
+import { splitEventsBySchedule } from "./lib/eventSchedule";
+import ExpandableText from "./components/ExpandableText";
 import { Metadata } from "next";
 import RelativeLink from "./components/RelativeLink";
 
@@ -22,11 +24,15 @@ export default async function Home() {
   let nextEvent: Event | undefined;
   let heroImageList: HeroImage[] = [];
   try {
+    // 「次回のイベント」は microCMS の category ではなく開催日で決める。
+    // category 方式は編集者の切り替え待ちで終了済みイベントが残り続けた
+    // （/event と同じ事故。判定は app/lib/eventSchedule.js に集約）。
+    // 開催日順に並ばない可能性があるため、絞り込みはこちらで行う。
     const response = await client.getList<Event>({
       endpoint: "events",
-      queries: { filters: "category[contains]upcoming", limit: 1 },
+      queries: { limit: 100 },
     });
-    nextEvent = response.contents[0];
+    nextEvent = splitEventsBySchedule(response.contents).upcoming[0];
   } catch (error) {
     console.error("microCMS events fetch failed (home) — 空状態で描画継続:", error);
   }
@@ -127,6 +133,8 @@ export default async function Home() {
                       </svg>
                       <span>
                         {new Date(nextEvent.date).toLocaleDateString("ja-JP", {
+                          // Vercel のサーバは UTC で動くため、指定しないと前日にずれる
+                          timeZone: "Asia/Tokyo",
                           year: "numeric",
                           month: "long",
                           day: "numeric",
@@ -177,9 +185,10 @@ export default async function Home() {
                     <h3 className="text-xl md:text-2xl font-bold mt-6 mb-4">
                       {nextEvent.title}
                     </h3>
-                    <p className="text-gray-600 text-base md:text-lg">
-                      {nextEvent.description}
-                    </p>
+                    <ExpandableText
+                      text={nextEvent.description}
+                      className="text-gray-600 text-base md:text-lg"
+                    />
                     <div className="flex gap-4 mt-8">
                       {registrationUrl && (
                         <a
@@ -352,7 +361,7 @@ export default async function Home() {
             <div className="grid grid-cols-2 gap-6 sm:gap-8 max-w-lg mx-auto mt-16">
               <div className="text-center bg-white rounded-3xl p-6 sm:p-8 shadow-lg">
                 <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">
-                  15+
+                  20+
                 </div>
                 <p className="text-gray-600 text-sm md:text-base">
                   アクティブメンバー
@@ -429,7 +438,7 @@ export default async function Home() {
                     庄司 悠太郎
                   </p>
                   <p className="text-gray-600 text-sm md:text-base">
-                    社会工学類3年生。インターンシップ経験、起業準備中。いつも笑顔なムードメーカー。長期休みに海外ボランティアに取り組むグローバルな視点を持つ。
+                    社会工学類4年生。インターンシップ経験、起業準備中。いつも笑顔なムードメーカー。長期休みに海外ボランティアに取り組むグローバルな視点を持つ。
                   </p>
                 </div>
               </div>
@@ -471,7 +480,7 @@ export default async function Home() {
                   </div>
                   <p className="text-lg md:text-xl font-bold mb-2">森 丈耀</p>
                   <p className="text-gray-600 text-sm md:text-base">
-                    東京大学農学部3年生。食に関する環境問題に取り組んでいる。どこからでも参加する、やる気No.1。STARTiXの財務を担当。
+                    東京大学農学部4年生。食に関する環境問題に取り組んでいる。どこからでも参加する、やる気No.1。STARTiXの財務を担当。
                   </p>
                 </div>
               </div>
