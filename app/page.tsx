@@ -4,6 +4,7 @@ import HeroSlideshow from "./components/HeroSlideshow";
 import { client, Event, HeroImage } from "./lib/microcms";
 import { safeHttpsUrl } from "./lib/safeUrl";
 import { splitEventsBySchedule } from "./lib/eventSchedule";
+import ExpandableText from "./components/ExpandableText";
 import { Metadata } from "next";
 import RelativeLink from "./components/RelativeLink";
 
@@ -184,9 +185,10 @@ export default async function Home() {
                     <h3 className="text-xl md:text-2xl font-bold mt-6 mb-4">
                       {nextEvent.title}
                     </h3>
-                    <p className="text-gray-600 text-base md:text-lg">
-                      {nextEvent.description}
-                    </p>
+                    <ExpandableText
+                      text={nextEvent.description}
+                      className="text-gray-600 text-base md:text-lg"
+                    />
                     <div className="flex gap-4 mt-8">
                       {registrationUrl && (
                         <a

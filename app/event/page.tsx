@@ -11,6 +11,7 @@ import { client } from "../lib/microcms";
 import type { Event } from "../lib/microcms";
 import { safeHttpsUrl } from "../lib/safeUrl";
 import { splitEventsBySchedule } from "../lib/eventSchedule";
+import ExpandableText from "../components/ExpandableText";
 // サーバーコンポーネントに変更
 // On-Demand ISR (microCMS Webhook → /api/revalidate) で即時反映する。
 // 下記の数値は Webhook が万一失敗した場合のフォールバックの最大鮮度。
@@ -142,9 +143,10 @@ export default async function EventPage() {
                         <h3 className="text-xl md:text-2xl font-bold mt-6 mb-4">
                           {event.title}
                         </h3>
-                        <p className="text-gray-600 text-base md:text-lg">
-                          {event.description}
-                        </p>
+                        <ExpandableText
+                          text={event.description}
+                          className="text-gray-600 text-base md:text-lg"
+                        />
                         <div className="flex gap-4 mt-8">
                           {event.registrationUrl && (
                             <a
@@ -256,7 +258,11 @@ export default async function EventPage() {
                         <h3 className="text-lg md:text-xl font-bold mb-2">
                           {event.title}
                         </h3>
-                        <p className="text-gray-600 text-sm md:text-base">
+                        {/* カード全体が <Link> なので、中に「もっと見る」ボタンは置けない
+                            （リンクの入れ子になる）。3行で切り、続きはリンク先で読む。
+                            実測で本文は 26〜382 文字とばらつき、全文を流すと
+                            カードの高さが揃わずグリッドが崩れていた */}
+                        <p className="text-gray-600 text-sm md:text-base line-clamp-3">
                           {event.description}
                         </p>
                       </div>
